@@ -235,6 +235,7 @@ async function loadUsers(){
 async function deleteUser(uid,email){
   if(!confirm('למחוק את '+email+'?'))return;
   if(!confirm('כל הנתונים יימחקו. להמשיך?'))return;
+  await db.from('vehicle_transfers').delete().or('from_user_id.eq.'+uid+',to_user_id.eq.'+uid);
   const{error}=await db.rpc('admin_delete_user',{target_user_id:uid});
   if(error){alert('שגיאה: '+error.message);return}
   usersCache=usersCache.filter(u=>u.id!==uid);loadUsers();
