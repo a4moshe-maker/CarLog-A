@@ -4,12 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CarLog Admin</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; }
-
-    /* Login */
     .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #1e3a8a; }
     .login-card { background: white; border-radius: 16px; padding: 40px 32px; width: 380px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
     .login-card h1 { text-align: center; color: #1e40af; margin-bottom: 8px; font-size: 28px; }
@@ -18,26 +15,21 @@
     .form-group label { display: block; font-weight: 600; color: #374151; margin-bottom: 6px; font-size: 14px; }
     .form-group input { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 15px; direction: ltr; text-align: right; }
     .form-group input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
     .btn-primary { background: #1e40af; color: white; }
     .btn-primary:hover { background: #1e3a8a; }
     .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
     .error-msg { color: #dc2626; text-align: center; margin-top: 12px; font-size: 14px; }
-
-    /* Layout */
-    .app { display: none; }
-    .app.active { display: flex; min-height: 100vh; }
+    .app { display: none; min-height: 100vh; }
+    .app.active { display: flex; }
     .sidebar { width: 220px; background: #1e3a8a; color: white; padding: 24px 0; position: fixed; top: 0; right: 0; height: 100vh; }
     .sidebar h2 { text-align: center; padding: 0 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.15); font-size: 22px; }
     .sidebar nav { padding: 16px 0; }
-    .sidebar nav a { display: block; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 15px; transition: all 0.2s; }
+    .sidebar nav a { display: block; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 15px; cursor: pointer; }
     .sidebar nav a:hover, .sidebar nav a.active { color: white; background: rgba(255,255,255,0.1); }
     .sidebar .sign-out { position: absolute; bottom: 24px; right: 0; left: 0; padding: 0 16px; }
     .sidebar .sign-out button { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; cursor: pointer; font-size: 14px; }
-    .sidebar .sign-out button:hover { background: rgba(255,255,255,0.2); }
     .main { margin-right: 220px; flex: 1; padding: 32px; }
-
-    /* Table */
     .card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 24px; }
     .card h3 { font-size: 18px; margin-bottom: 16px; color: #111827; }
     table { width: 100%; border-collapse: collapse; }
@@ -45,51 +37,34 @@
     td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
     tr:hover td { background: #f8fafc; }
     .clickable { cursor: pointer; }
-
-    /* Buttons */
     .btn-sm { padding: 6px 14px; border-radius: 8px; border: none; font-size: 13px; cursor: pointer; font-weight: 600; }
     .btn-danger { background: #fee2e2; color: #dc2626; }
     .btn-danger:hover { background: #fecaca; }
     .btn-edit { background: #dbeafe; color: #1e40af; }
     .btn-edit:hover { background: #bfdbfe; }
     .btn-back { background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; margin-bottom: 16px; }
-    .btn-back:hover { background: #e5e7eb; }
-
-    /* Stats */
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); text-align: center; }
     .stat-card .num { font-size: 28px; font-weight: 700; color: #1e40af; }
     .stat-card .label { font-size: 13px; color: #6b7280; margin-top: 4px; }
-
-    /* Detail */
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .info-item { padding: 12px; background: #f8fafc; border-radius: 8px; }
     .info-item .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
     .info-item .value { font-size: 15px; color: #111827; font-weight: 500; }
-
-    /* Edit form */
     .edit-form input, .edit-form textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; margin-bottom: 12px; font-family: inherit; }
     .edit-form textarea { min-height: 80px; resize: vertical; }
     .edit-form label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px; font-weight: 600; }
-
-    /* Loading */
     .loading { text-align: center; padding: 40px; color: #6b7280; }
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .badge-blue { background: #dbeafe; color: #1e40af; }
-    .badge-green { background: #dcfce7; color: #16a34a; }
-    .badge-red { background: #fee2e2; color: #dc2626; }
-
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #dbeafe; color: #1e40af; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen" class="login-container">
   <div class="login-card">
     <h1>CarLog Admin</h1>
     <p id="login-subtitle">פאנל ניהול</p>
-
     <div id="login-step1">
       <div class="form-group">
         <label>אימייל</label>
@@ -99,94 +74,41 @@
         <label>סיסמה</label>
         <input type="password" id="login-password" placeholder="סיסמה">
       </div>
-      <button class="btn btn-primary" id="login-btn" onclick="handleLogin()">כניסה</button>
+      <button class="btn btn-primary" id="login-btn">כניסה</button>
     </div>
-
     <div id="login-step2" class="hidden">
       <div class="form-group">
         <label>קוד אימות (נשלח למייל)</label>
-        <input type="text" id="login-otp" placeholder="הזן קוד" style="text-align: center; font-size: 24px; letter-spacing: 8px;">
+        <input type="text" id="login-otp" placeholder="הזן קוד" style="text-align:center;font-size:24px;letter-spacing:8px;">
       </div>
-      <button class="btn btn-primary" id="otp-btn" onclick="handleOtp()">אימות</button>
+      <button class="btn btn-primary" id="otp-btn">אימות</button>
     </div>
-
     <div id="login-error" class="error-msg hidden"></div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="app">
   <aside class="sidebar">
     <h2>CarLog Admin</h2>
     <nav>
-      <a href="#" onclick="showPage('users')" id="nav-users" class="active">👥 משתמשים</a>
+      <a id="nav-users" class="active" data-page="users">👥 משתמשים</a>
     </nav>
     <div class="sign-out">
-      <button onclick="handleSignOut()">יציאה</button>
+      <button id="signout-btn">יציאה</button>
     </div>
   </aside>
-  <main class="main" id="main-content">
-    <!-- Dynamic content -->
-  </main>
+  <main class="main" id="main-content"></main>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://ulcebkhczxmeqzdhmsqg.sb.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY2Via2hjenhtZXF6ZGhtc3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNjY3MjMsImV4cCI6MjA4ODY0MjcyM30.JJUNzO3l1BIEm4guBB2TI0WF1gv0bIMaOfo0L4z0u-w';
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db = createClient(
+  'https://ulcebkhczxmeqzdhmsqg.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY2Via2hjenhtZXF6ZGhtc3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNjY3MjMsImV4cCI6MjA4ODY0MjcyM30.JJUNzO3l1BIEm4guBB2TI0WF1gv0bIMaOfo0L4z0u-w'
+);
 
-let currentUser = null;
 let otpEmail = '';
-
-// ========== AUTH ==========
-
-async function handleLogin() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  showError('');
-
-  if (!email || !password) { showError('הזן אימייל וסיסמה'); return; }
-
-  document.getElementById('login-btn').disabled = true;
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showError(error.message); document.getElementById('login-btn').disabled = false; return; }
-
-  // Check admin
-  const { data: admin } = await sb.from('admins').select('user_id').eq('user_id', data.user.id).single();
-  if (!admin) {
-    await sb.auth.signOut();
-    showError('אין לך הרשאת מנהל');
-    document.getElementById('login-btn').disabled = false;
-    return;
-  }
-
-  // Send OTP
-  otpEmail = email;
-  await sb.auth.signOut();
-  const { error: otpError } = await sb.auth.signInWithOtp({ email });
-  if (otpError) { showError(otpError.message); document.getElementById('login-btn').disabled = false; return; }
-
-  document.getElementById('login-step1').classList.add('hidden');
-  document.getElementById('login-step2').classList.remove('hidden');
-  document.getElementById('login-subtitle').textContent = `קוד אימות נשלח ל-${email}`;
-  document.getElementById('login-btn').disabled = false;
-}
-
-async function handleOtp() {
-  const token = document.getElementById('login-otp').value.trim();
-  showError('');
-  if (!token) { showError('הזן קוד אימות'); return; }
-
-  document.getElementById('otp-btn').disabled = true;
-
-  const { data, error } = await sb.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
-  if (error) { showError('קוד שגוי או שפג תוקפו'); document.getElementById('otp-btn').disabled = false; return; }
-
-  currentUser = data.user;
-  showApp();
-}
 
 function showError(msg) {
   const el = document.getElementById('login-error');
@@ -194,9 +116,50 @@ function showError(msg) {
   else { el.classList.add('hidden'); }
 }
 
-async function handleSignOut() {
-  await sb.auth.signOut();
-  currentUser = null;
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('he-IL'); } catch { return d; }
+}
+
+// ===== AUTH =====
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  showError('');
+  if (!email || !password) { showError('הזן אימייל וסיסמה'); return; }
+
+  document.getElementById('login-btn').disabled = true;
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+  if (error) { showError(error.message); document.getElementById('login-btn').disabled = false; return; }
+
+  const { data: admin } = await db.from('admins').select('user_id').eq('user_id', data.user.id).single();
+  if (!admin) { await db.auth.signOut(); showError('אין לך הרשאת מנהל'); document.getElementById('login-btn').disabled = false; return; }
+
+  otpEmail = email;
+  await db.auth.signOut();
+  const { error: otpErr } = await db.auth.signInWithOtp({ email });
+  if (otpErr) { showError(otpErr.message); document.getElementById('login-btn').disabled = false; return; }
+
+  document.getElementById('login-step1').classList.add('hidden');
+  document.getElementById('login-step2').classList.remove('hidden');
+  document.getElementById('login-subtitle').textContent = 'קוד אימות נשלח ל-' + email;
+  document.getElementById('login-btn').disabled = false;
+});
+
+document.getElementById('otp-btn').addEventListener('click', async () => {
+  const token = document.getElementById('login-otp').value.trim();
+  showError('');
+  if (!token) { showError('הזן קוד אימות'); return; }
+
+  document.getElementById('otp-btn').disabled = true;
+  const { error } = await db.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
+  if (error) { showError('קוד שגוי או שפג תוקפו'); document.getElementById('otp-btn').disabled = false; return; }
+  showApp();
+});
+
+document.getElementById('signout-btn').addEventListener('click', async () => {
+  await db.auth.signOut();
   document.getElementById('app').classList.remove('active');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-step1').classList.remove('hidden');
@@ -205,307 +168,281 @@ async function handleSignOut() {
   document.getElementById('login-password').value = '';
   document.getElementById('login-otp').value = '';
   showError('');
-}
+});
 
-// ========== APP ==========
+document.getElementById('nav-users').addEventListener('click', () => loadUsers());
 
-async function showApp() {
+function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('active');
-  showPage('users');
+  loadUsers();
 }
 
-function showPage(page) {
-  document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
-  const navEl = document.getElementById(`nav-${page}`);
-  if (navEl) navEl.classList.add('active');
-
-  if (page === 'users') loadUsers();
-}
-
-// ========== USERS ==========
+// ===== USERS =====
 
 async function loadUsers() {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: users, error } = await sb.rpc('admin_list_users');
-  if (error) { main.innerHTML = `<div class="card"><p>שגיאה: ${error.message}</p></div>`; return; }
+  const { data: users, error } = await db.rpc('admin_list_users');
+  if (error) { main.innerHTML = '<div class="card"><p>שגיאה: ' + error.message + '</p></div>'; return; }
 
-  const { data: vehicles } = await sb.from('vehicles').select('user_id');
-  const vehicleCounts = {};
-  (vehicles || []).forEach(v => { vehicleCounts[v.user_id] = (vehicleCounts[v.user_id] || 0) + 1; });
+  const { data: vehicles } = await db.from('vehicles').select('user_id');
+  const vc = {};
+  (vehicles || []).forEach(v => { vc[v.user_id] = (vc[v.user_id] || 0) + 1; });
 
-  main.innerHTML = `
-    <div class="stats">
-      <div class="stat-card"><div class="num">${users.length}</div><div class="label">משתמשים</div></div>
-      <div class="stat-card"><div class="num">${(vehicles || []).length}</div><div class="label">רכבים</div></div>
-    </div>
-    <div class="card">
-      <h3>משתמשים</h3>
-      <table>
-        <thead>
-          <tr><th>אימייל</th><th>רכבים</th><th>הצטרפות</th><th>כניסה אחרונה</th><th></th></tr>
-        </thead>
-        <tbody>
-          ${users.map(u => `
-            <tr class="clickable" onclick="loadUserDetail('${u.id}')">
-              <td>${u.email || '—'}</td>
-              <td><span class="badge badge-blue">${vehicleCounts[u.id] || 0}</span></td>
-              <td>${formatDate(u.created_at)}</td>
-              <td>${formatDate(u.last_sign_in_at)}</td>
-              <td><button class="btn-sm btn-danger" onclick="event.stopPropagation(); deleteUser('${u.id}', '${u.email}')">מחק</button></td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
+  let rows = users.map(u => {
+    const tr = document.createElement('tr');
+    tr.className = 'clickable';
+    tr.innerHTML = '<td>' + (u.email || '—') + '</td><td><span class="badge">' + (vc[u.id] || 0) + '</span></td><td>' + formatDate(u.created_at) + '</td><td>' + formatDate(u.last_sign_in_at) + '</td><td><button class="btn-sm btn-danger del-user-btn">מחק</button></td>';
+    tr.addEventListener('click', (e) => { if (!e.target.classList.contains('del-user-btn')) loadUserDetail(u.id); });
+    tr.querySelector('.del-user-btn').addEventListener('click', () => deleteUser(u.id, u.email));
+    return tr;
+  });
+
+  main.innerHTML = '<div class="stats"><div class="stat-card"><div class="num">' + users.length + '</div><div class="label">משתמשים</div></div><div class="stat-card"><div class="num">' + (vehicles || []).length + '</div><div class="label">רכבים</div></div></div><div class="card"><h3>משתמשים</h3><table><thead><tr><th>אימייל</th><th>רכבים</th><th>הצטרפות</th><th>כניסה אחרונה</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table></div>';
+  const tbody = document.getElementById('users-tbody');
+  rows.forEach(r => tbody.appendChild(r));
 }
 
 async function deleteUser(userId, email) {
-  if (!confirm(`למחוק את המשתמש ${email}?`)) return;
+  if (!confirm('למחוק את המשתמש ' + email + '?')) return;
   if (!confirm('פעולה זו תמחק את כל נתוני המשתמש. להמשיך?')) return;
-
-  const { error } = await sb.rpc('admin_delete_user', { target_user_id: userId });
+  const { error } = await db.rpc('admin_delete_user', { target_user_id: userId });
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadUsers();
 }
 
-// ========== USER DETAIL ==========
+// ===== USER DETAIL =====
 
 async function loadUserDetail(userId) {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: users } = await sb.rpc('admin_list_users');
+  const { data: users } = await db.rpc('admin_list_users');
   const user = (users || []).find(u => u.id === userId);
   if (!user) { main.innerHTML = '<div class="card"><p>משתמש לא נמצא</p></div>'; return; }
 
-  const { data: vehicles } = await sb.from('vehicles').select('*').eq('user_id', userId);
-  const vehicleIds = (vehicles || []).map(v => v.id);
-
-  let serviceCounts = {};
-  if (vehicleIds.length > 0) {
-    const { data: services } = await sb.from('service_records').select('vehicle_id').in('vehicle_id', vehicleIds);
-    (services || []).forEach(s => { serviceCounts[s.vehicle_id] = (serviceCounts[s.vehicle_id] || 0) + 1; });
+  const { data: vehicles } = await db.from('vehicles').select('*').eq('user_id', userId);
+  const vIds = (vehicles || []).map(v => v.id);
+  let sc = {};
+  if (vIds.length > 0) {
+    const { data: svcs } = await db.from('service_records').select('vehicle_id').in('vehicle_id', vIds);
+    (svcs || []).forEach(s => { sc[s.vehicle_id] = (sc[s.vehicle_id] || 0) + 1; });
   }
 
-  main.innerHTML = `
-    <button class="btn-back" onclick="loadUsers()">← חזרה למשתמשים</button>
-    <div class="card">
-      <h3>פרטי משתמש</h3>
-      <div class="info-grid">
-        <div class="info-item"><div class="label">אימייל</div><div class="value">${user.email || '—'}</div></div>
-        <div class="info-item"><div class="label">ID</div><div class="value" style="font-size:11px; font-family:monospace; word-break:break-all;">${user.id}</div></div>
-        <div class="info-item"><div class="label">הצטרפות</div><div class="value">${formatDate(user.created_at)}</div></div>
-        <div class="info-item"><div class="label">כניסה אחרונה</div><div class="value">${formatDate(user.last_sign_in_at)}</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <h3>רכבים (${(vehicles || []).length})</h3>
-      ${(vehicles || []).length === 0 ? '<p style="color:#6b7280">אין רכבים</p>' : `
-        <table>
-          <thead><tr><th>רכב</th><th>לוחית</th><th>שנה</th><th>טיפולים</th><th></th></tr></thead>
-          <tbody>
-            ${(vehicles || []).map(v => `
-              <tr class="clickable" onclick="loadVehicleDetail('${v.id}', '${userId}')">
-                <td>${v.make} ${v.model}</td>
-                <td>${v.license_plate}</td>
-                <td>${v.year}</td>
-                <td><span class="badge badge-blue">${serviceCounts[v.id] || 0}</span></td>
-                <td><button class="btn-sm btn-danger" onclick="event.stopPropagation(); deleteVehicle('${v.id}', '${userId}')">מחק</button></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `}
-    </div>
-    <div style="margin-top:24px">
-      <button class="btn-sm btn-danger" onclick="deleteUser('${userId}', '${user.email}')">מחק משתמש</button>
-    </div>
-  `;
+  main.innerHTML = '<div class="card"><h3>פרטי משתמש</h3><div class="info-grid"><div class="info-item"><div class="label">אימייל</div><div class="value">' + (user.email || '—') + '</div></div><div class="info-item"><div class="label">ID</div><div class="value" style="font-size:11px;font-family:monospace;word-break:break-all;">' + user.id + '</div></div><div class="info-item"><div class="label">הצטרפות</div><div class="value">' + formatDate(user.created_at) + '</div></div><div class="info-item"><div class="label">כניסה אחרונה</div><div class="value">' + formatDate(user.last_sign_in_at) + '</div></div></div></div><div class="card"><h3>רכבים (' + (vehicles || []).length + ')</h3><table><thead><tr><th>רכב</th><th>לוחית</th><th>שנה</th><th>טיפולים</th><th></th></tr></thead><tbody id="vehicles-tbody"></tbody></table></div>';
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'btn-back';
+  backBtn.textContent = '← חזרה למשתמשים';
+  backBtn.addEventListener('click', () => loadUsers());
+  main.insertBefore(backBtn, main.firstChild);
+
+  // Delete user button
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn-sm btn-danger';
+  delBtn.textContent = 'מחק משתמש';
+  delBtn.style.marginTop = '16px';
+  delBtn.addEventListener('click', () => deleteUser(userId, user.email));
+  main.appendChild(delBtn);
+
+  const tbody = document.getElementById('vehicles-tbody');
+  (vehicles || []).forEach(v => {
+    const tr = document.createElement('tr');
+    tr.className = 'clickable';
+    tr.innerHTML = '<td>' + v.make + ' ' + v.model + '</td><td>' + v.license_plate + '</td><td>' + v.year + '</td><td><span class="badge">' + (sc[v.id] || 0) + '</span></td><td><button class="btn-sm btn-danger del-v-btn">מחק</button></td>';
+    tr.addEventListener('click', (e) => { if (!e.target.classList.contains('del-v-btn')) loadVehicleDetail(v.id, userId); });
+    tr.querySelector('.del-v-btn').addEventListener('click', () => deleteVehicle(v.id, userId));
+    tbody.appendChild(tr);
+  });
 }
 
-// ========== VEHICLE DETAIL ==========
+// ===== VEHICLE DETAIL =====
 
 async function loadVehicleDetail(vehicleId, userId) {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: vehicle } = await sb.from('vehicles').select('*').eq('id', vehicleId).single();
+  const { data: vehicle } = await db.from('vehicles').select('*').eq('id', vehicleId).single();
   if (!vehicle) { main.innerHTML = '<div class="card"><p>רכב לא נמצא</p></div>'; return; }
 
-  const { data: services } = await sb.from('service_records').select('*').eq('vehicle_id', vehicleId).order('date', { ascending: false });
+  const { data: services } = await db.from('service_records').select('*').eq('vehicle_id', vehicleId).order('date', { ascending: false });
   const totalCost = (services || []).reduce((sum, s) => sum + (s.cost || 0), 0);
 
-  main.innerHTML = `
-    <button class="btn-back" onclick="loadUserDetail('${userId}')">← חזרה למשתמש</button>
-    <div class="stats">
-      <div class="stat-card"><div class="num">${(services || []).length}</div><div class="label">טיפולים</div></div>
-      <div class="stat-card"><div class="num">₪${totalCost.toLocaleString()}</div><div class="label">סה"כ עלות</div></div>
-    </div>
-    <div class="card">
-      <h3>${vehicle.make} ${vehicle.model} ${vehicle.year} — ${vehicle.license_plate}</h3>
-      <div id="vehicle-view">
-        <div class="info-grid">
-          <div class="info-item"><div class="label">יצרן</div><div class="value">${vehicle.make}</div></div>
-          <div class="info-item"><div class="label">דגם</div><div class="value">${vehicle.model}</div></div>
-          <div class="info-item"><div class="label">שנה</div><div class="value">${vehicle.year}</div></div>
-          <div class="info-item"><div class="label">לוחית</div><div class="value">${vehicle.license_plate}</div></div>
-          <div class="info-item"><div class="label">דלק</div><div class="value">${vehicle.sug_delek || '—'}</div></div>
-          <div class="info-item"><div class="label">גיר</div><div class="value">${vehicle.gir || '—'}</div></div>
-          <div class="info-item"><div class="label">ק"מ</div><div class="value">${vehicle.current_mileage ? vehicle.current_mileage.toLocaleString() : '—'}</div></div>
-          <div class="info-item"><div class="label">טסט</div><div class="value">${vehicle.tokef_dt || '—'}</div></div>
-        </div>
-        <div style="margin-top:16px">
-          <button class="btn-sm btn-edit" onclick="showVehicleEdit('${vehicleId}', '${userId}')">עריכה</button>
-          <button class="btn-sm btn-danger" style="margin-right:8px" onclick="deleteVehicle('${vehicleId}', '${userId}')">מחק רכב</button>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <h3>היסטוריית טיפולים</h3>
-      ${(services || []).length === 0 ? '<p style="color:#6b7280">אין טיפולים</p>' : `
-        <table>
-          <thead><tr><th>תאריך</th><th>עבודה</th><th>עלות</th><th>ק"מ</th><th></th></tr></thead>
-          <tbody>
-            ${(services || []).map(s => `
-              <tr>
-                <td>${formatDate(s.date)}</td>
-                <td>${s.work_done}</td>
-                <td>₪${s.cost || 0}</td>
-                <td>${s.mileage ? s.mileage.toLocaleString() : '—'}</td>
-                <td>
-                  <button class="btn-sm btn-edit" onclick="showServiceEdit('${s.id}', '${vehicleId}', '${userId}')">ערוך</button>
-                  <button class="btn-sm btn-danger" style="margin-right:4px" onclick="deleteService('${s.id}', '${vehicleId}', '${userId}')">מחק</button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `}
-    </div>
-  `;
+  main.innerHTML = '';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'btn-back';
+  backBtn.textContent = '← חזרה למשתמש';
+  backBtn.addEventListener('click', () => loadUserDetail(userId));
+  main.appendChild(backBtn);
+
+  // Stats
+  const statsDiv = document.createElement('div');
+  statsDiv.className = 'stats';
+  statsDiv.innerHTML = '<div class="stat-card"><div class="num">' + (services || []).length + '</div><div class="label">טיפולים</div></div><div class="stat-card"><div class="num">₪' + totalCost.toLocaleString() + '</div><div class="label">סה"כ עלות</div></div>';
+  main.appendChild(statsDiv);
+
+  // Vehicle info
+  const vCard = document.createElement('div');
+  vCard.className = 'card';
+  vCard.innerHTML = '<h3>' + vehicle.make + ' ' + vehicle.model + ' ' + vehicle.year + ' — ' + vehicle.license_plate + '</h3><div class="info-grid"><div class="info-item"><div class="label">יצרן</div><div class="value">' + vehicle.make + '</div></div><div class="info-item"><div class="label">דגם</div><div class="value">' + vehicle.model + '</div></div><div class="info-item"><div class="label">שנה</div><div class="value">' + vehicle.year + '</div></div><div class="info-item"><div class="label">לוחית</div><div class="value">' + vehicle.license_plate + '</div></div><div class="info-item"><div class="label">דלק</div><div class="value">' + (vehicle.sug_delek || '—') + '</div></div><div class="info-item"><div class="label">גיר</div><div class="value">' + (vehicle.gir || '—') + '</div></div><div class="info-item"><div class="label">ק"מ</div><div class="value">' + (vehicle.current_mileage ? vehicle.current_mileage.toLocaleString() : '—') + '</div></div><div class="info-item"><div class="label">טסט</div><div class="value">' + (vehicle.tokef_dt || '—') + '</div></div></div>';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn-sm btn-edit';
+  editBtn.textContent = 'עריכה';
+  editBtn.style.marginTop = '16px';
+  editBtn.addEventListener('click', () => showVehicleEdit(vehicleId, userId, vehicle));
+
+  const delVBtn = document.createElement('button');
+  delVBtn.className = 'btn-sm btn-danger';
+  delVBtn.textContent = 'מחק רכב';
+  delVBtn.style.marginTop = '16px';
+  delVBtn.style.marginRight = '8px';
+  delVBtn.addEventListener('click', () => deleteVehicle(vehicleId, userId));
+
+  const btnsDiv = document.createElement('div');
+  btnsDiv.appendChild(editBtn);
+  btnsDiv.appendChild(delVBtn);
+  vCard.appendChild(btnsDiv);
+  main.appendChild(vCard);
+
+  // Services
+  const sCard = document.createElement('div');
+  sCard.className = 'card';
+  sCard.innerHTML = '<h3>היסטוריית טיפולים</h3>';
+
+  if ((services || []).length === 0) {
+    sCard.innerHTML += '<p style="color:#6b7280">אין טיפולים</p>';
+  } else {
+    const tbl = document.createElement('table');
+    tbl.innerHTML = '<thead><tr><th>תאריך</th><th>עבודה</th><th>עלות</th><th>ק"מ</th><th></th></tr></thead>';
+    const tb = document.createElement('tbody');
+    (services || []).forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + formatDate(s.date) + '</td><td>' + s.work_done + '</td><td>₪' + (s.cost || 0) + '</td><td>' + (s.mileage ? s.mileage.toLocaleString() : '—') + '</td><td></td>';
+      const td = tr.querySelector('td:last-child');
+
+      const eBtn = document.createElement('button');
+      eBtn.className = 'btn-sm btn-edit';
+      eBtn.textContent = 'ערוך';
+      eBtn.addEventListener('click', () => showServiceEdit(s, vehicleId, userId));
+
+      const dBtn = document.createElement('button');
+      dBtn.className = 'btn-sm btn-danger';
+      dBtn.textContent = 'מחק';
+      dBtn.style.marginRight = '4px';
+      dBtn.addEventListener('click', () => deleteService(s.id, vehicleId, userId));
+
+      td.appendChild(eBtn);
+      td.appendChild(dBtn);
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    sCard.appendChild(tbl);
+  }
+  main.appendChild(sCard);
 }
 
-async function showVehicleEdit(vehicleId, userId) {
-  const { data: v } = await sb.from('vehicles').select('*').eq('id', vehicleId).single();
-  if (!v) return;
-
+function showVehicleEdit(vehicleId, userId, v) {
   const main = document.getElementById('main-content');
-  main.innerHTML = `
-    <button class="btn-back" onclick="loadVehicleDetail('${vehicleId}', '${userId}')">← חזרה לרכב</button>
-    <div class="card">
-      <h3>עריכת רכב</h3>
-      <div class="edit-form">
-        <label>לוחית רישוי</label><input id="e-plate" value="${v.license_plate}">
-        <label>יצרן</label><input id="e-make" value="${v.make}">
-        <label>דגם</label><input id="e-model" value="${v.model}">
-        <label>שנה</label><input id="e-year" type="number" value="${v.year}">
-        <label>ק"מ נוכחי</label><input id="e-km" type="number" value="${v.current_mileage || ''}">
-        <div style="margin-top:16px">
-          <button class="btn btn-primary" style="width:auto; padding:10px 32px" onclick="saveVehicle('${vehicleId}', '${userId}')">שמור</button>
-          <button class="btn-back" style="display:inline; margin-right:8px" onclick="loadVehicleDetail('${vehicleId}', '${userId}')">ביטול</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
+  main.innerHTML = '';
 
-async function saveVehicle(vehicleId, userId) {
-  const updates = {
-    license_plate: document.getElementById('e-plate').value,
-    make: document.getElementById('e-make').value,
-    model: document.getElementById('e-model').value,
-    year: parseInt(document.getElementById('e-year').value),
-    current_mileage: document.getElementById('e-km').value ? parseInt(document.getElementById('e-km').value) : null,
-  };
+  const backBtn = document.createElement('button');
+  backBtn.className = 'btn-back';
+  backBtn.textContent = '← חזרה לרכב';
+  backBtn.addEventListener('click', () => loadVehicleDetail(vehicleId, userId));
+  main.appendChild(backBtn);
 
-  const { error } = await sb.from('vehicles').update(updates).eq('id', vehicleId);
-  if (error) { alert('שגיאה: ' + error.message); return; }
-  loadVehicleDetail(vehicleId, userId);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<h3>עריכת רכב</h3><div class="edit-form"><label>לוחית רישוי</label><input id="e-plate" value="' + v.license_plate + '"><label>יצרן</label><input id="e-make" value="' + v.make + '"><label>דגם</label><input id="e-model" value="' + v.model + '"><label>שנה</label><input id="e-year" type="number" value="' + v.year + '"><label>ק"מ נוכחי</label><input id="e-km" type="number" value="' + (v.current_mileage || '') + '"></div>';
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.style.width = 'auto';
+  saveBtn.style.padding = '10px 32px';
+  saveBtn.style.marginTop = '16px';
+  saveBtn.textContent = 'שמור';
+  saveBtn.addEventListener('click', async () => {
+    const { error } = await db.from('vehicles').update({
+      license_plate: document.getElementById('e-plate').value,
+      make: document.getElementById('e-make').value,
+      model: document.getElementById('e-model').value,
+      year: parseInt(document.getElementById('e-year').value),
+      current_mileage: document.getElementById('e-km').value ? parseInt(document.getElementById('e-km').value) : null,
+    }).eq('id', vehicleId);
+    if (error) { alert('שגיאה: ' + error.message); return; }
+    loadVehicleDetail(vehicleId, userId);
+  });
+
+  card.querySelector('.edit-form').appendChild(saveBtn);
+  main.appendChild(card);
 }
 
 async function deleteVehicle(vehicleId, userId) {
   if (!confirm('למחוק את הרכב? כל הטיפולים יימחקו גם.')) return;
-  const { error } = await sb.from('vehicles').delete().eq('id', vehicleId);
+  const { error } = await db.from('vehicles').delete().eq('id', vehicleId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadUserDetail(userId);
 }
 
-// ========== SERVICE EDIT ==========
+// ===== SERVICE EDIT =====
 
-async function showServiceEdit(serviceId, vehicleId, userId) {
-  const { data: s } = await sb.from('service_records').select('*').eq('id', serviceId).single();
-  if (!s) return;
-
+function showServiceEdit(s, vehicleId, userId) {
   const main = document.getElementById('main-content');
-  main.innerHTML = `
-    <button class="btn-back" onclick="loadVehicleDetail('${vehicleId}', '${userId}')">← חזרה לרכב</button>
-    <div class="card">
-      <h3>עריכת טיפול</h3>
-      <div class="edit-form">
-        <label>תאריך</label><input id="s-date" type="date" value="${s.date}" style="direction:ltr">
-        <label>עבודה שבוצעה</label><textarea id="s-work">${s.work_done}</textarea>
-        <label>עלות (₪)</label><input id="s-cost" type="number" value="${s.cost || 0}">
-        <label>ק"מ</label><input id="s-km" type="number" value="${s.mileage || ''}">
-        <label>הערות</label><textarea id="s-notes">${s.notes || ''}</textarea>
-        <div style="margin-top:16px">
-          <button class="btn btn-primary" style="width:auto; padding:10px 32px" onclick="saveService('${serviceId}', '${vehicleId}', '${userId}')">שמור</button>
-          <button class="btn-back" style="display:inline; margin-right:8px" onclick="loadVehicleDetail('${vehicleId}', '${userId}')">ביטול</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
+  main.innerHTML = '';
 
-async function saveService(serviceId, vehicleId, userId) {
-  const updates = {
-    date: document.getElementById('s-date').value,
-    work_done: document.getElementById('s-work').value,
-    cost: parseFloat(document.getElementById('s-cost').value) || 0,
-    mileage: document.getElementById('s-km').value ? parseInt(document.getElementById('s-km').value) : null,
-    notes: document.getElementById('s-notes').value,
-  };
+  const backBtn = document.createElement('button');
+  backBtn.className = 'btn-back';
+  backBtn.textContent = '← חזרה לרכב';
+  backBtn.addEventListener('click', () => loadVehicleDetail(vehicleId, userId));
+  main.appendChild(backBtn);
 
-  if (!updates.work_done) { alert('שדה "עבודה שבוצעה" הוא חובה'); return; }
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<h3>עריכת טיפול</h3><div class="edit-form"><label>תאריך</label><input id="s-date" type="date" value="' + s.date + '" style="direction:ltr"><label>עבודה שבוצעה</label><textarea id="s-work">' + s.work_done + '</textarea><label>עלות (₪)</label><input id="s-cost" type="number" value="' + (s.cost || 0) + '"><label>ק"מ</label><input id="s-km" type="number" value="' + (s.mileage || '') + '"><label>הערות</label><textarea id="s-notes">' + (s.notes || '') + '</textarea></div>';
 
-  const { error } = await sb.from('service_records').update(updates).eq('id', serviceId);
-  if (error) { alert('שגיאה: ' + error.message); return; }
-  loadVehicleDetail(vehicleId, userId);
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.style.width = 'auto';
+  saveBtn.style.padding = '10px 32px';
+  saveBtn.style.marginTop = '16px';
+  saveBtn.textContent = 'שמור';
+  saveBtn.addEventListener('click', async () => {
+    const work = document.getElementById('s-work').value;
+    if (!work) { alert('שדה "עבודה שבוצעה" הוא חובה'); return; }
+    const { error } = await db.from('service_records').update({
+      date: document.getElementById('s-date').value,
+      work_done: work,
+      cost: parseFloat(document.getElementById('s-cost').value) || 0,
+      mileage: document.getElementById('s-km').value ? parseInt(document.getElementById('s-km').value) : null,
+      notes: document.getElementById('s-notes').value,
+    }).eq('id', s.id);
+    if (error) { alert('שגיאה: ' + error.message); return; }
+    loadVehicleDetail(vehicleId, userId);
+  });
+
+  card.querySelector('.edit-form').appendChild(saveBtn);
+  main.appendChild(card);
 }
 
 async function deleteService(serviceId, vehicleId, userId) {
   if (!confirm('למחוק את הטיפול?')) return;
-  const { error } = await sb.from('service_records').delete().eq('id', serviceId);
+  const { error } = await db.from('service_records').delete().eq('id', serviceId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadVehicleDetail(vehicleId, userId);
 }
 
-// ========== UTILS ==========
+// ===== AUTO LOGIN CHECK =====
 
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
-  try {
-    return new Date(dateStr).toLocaleDateString('he-IL');
-  } catch { return dateStr; }
+const { data: { session } } = await db.auth.getSession();
+if (session) {
+  const { data: admin } = await db.from('admins').select('user_id').eq('user_id', session.user.id).single();
+  if (admin) { showApp(); } else { await db.auth.signOut(); }
 }
-
-// Check existing session on load
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    const { data: admin } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).single();
-    if (admin) {
-      currentUser = session.user;
-      showApp();
-    } else {
-      await sb.auth.signOut();
-    }
-  }
-})();
 </script>
-
 </body>
 </html>
