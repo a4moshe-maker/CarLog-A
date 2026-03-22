@@ -5,58 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CarLog Admin</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; }
-    .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #1e3a8a; }
-    .login-card { background: white; border-radius: 16px; padding: 40px 32px; width: 380px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .login-card h1 { text-align: center; color: #1e40af; margin-bottom: 8px; font-size: 28px; }
-    .login-card p { text-align: center; color: #6b7280; margin-bottom: 24px; font-size: 14px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-weight: 600; color: #374151; margin-bottom: 6px; font-size: 14px; }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 15px; direction: ltr; text-align: right; }
-    .form-group input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
-    .btn-primary { background: #1e40af; color: white; }
-    .btn-primary:hover { background: #1e3a8a; }
-    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
-    .error-msg { color: #dc2626; text-align: center; margin-top: 12px; font-size: 14px; }
-    .app { display: none; min-height: 100vh; }
-    .app.active { display: flex; }
-    .sidebar { width: 220px; background: #1e3a8a; color: white; padding: 24px 0; position: fixed; top: 0; right: 0; height: 100vh; }
-    .sidebar h2 { text-align: center; padding: 0 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.15); font-size: 22px; }
-    .sidebar nav { padding: 16px 0; }
-    .sidebar nav a { display: block; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 15px; cursor: pointer; }
-    .sidebar nav a:hover, .sidebar nav a.active { color: white; background: rgba(255,255,255,0.1); }
-    .sidebar .sign-out { position: absolute; bottom: 24px; right: 0; left: 0; padding: 0 16px; }
-    .sidebar .sign-out button { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; cursor: pointer; font-size: 14px; }
-    .main { margin-right: 220px; flex: 1; padding: 32px; }
-    .card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 24px; }
-    .card h3 { font-size: 18px; margin-bottom: 16px; color: #111827; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: right; padding: 12px 16px; background: #f8fafc; color: #6b7280; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
-    td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-    tr:hover td { background: #f8fafc; }
-    .clickable { cursor: pointer; }
-    .btn-sm { padding: 6px 14px; border-radius: 8px; border: none; font-size: 13px; cursor: pointer; font-weight: 600; }
-    .btn-danger { background: #fee2e2; color: #dc2626; }
-    .btn-danger:hover { background: #fecaca; }
-    .btn-edit { background: #dbeafe; color: #1e40af; }
-    .btn-edit:hover { background: #bfdbfe; }
-    .btn-back { background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; margin-bottom: 16px; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); text-align: center; }
-    .stat-card .num { font-size: 28px; font-weight: 700; color: #1e40af; }
-    .stat-card .label { font-size: 13px; color: #6b7280; margin-top: 4px; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .info-item { padding: 12px; background: #f8fafc; border-radius: 8px; }
-    .info-item .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
-    .info-item .value { font-size: 15px; color: #111827; font-weight: 500; }
-    .edit-form input, .edit-form textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; margin-bottom: 12px; font-family: inherit; }
-    .edit-form textarea { min-height: 80px; resize: vertical; }
-    .edit-form label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px; font-weight: 600; }
-    .loading { text-align: center; padding: 40px; color: #6b7280; }
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #dbeafe; color: #1e40af; }
-    .hidden { display: none; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+    .login-container{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e3a8a}
+    .login-card{background:#fff;border-radius:16px;padding:40px 32px;width:380px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+    .login-card h1{text-align:center;color:#1e40af;margin-bottom:8px;font-size:28px}
+    .login-card p{text-align:center;color:#6b7280;margin-bottom:24px;font-size:14px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-weight:600;color:#374151;margin-bottom:6px;font-size:14px}
+    .form-group input{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:15px;direction:ltr;text-align:right}
+    .form-group input:focus{outline:none;border-color:#1e40af;box-shadow:0 0 0 3px rgba(30,64,175,.1)}
+    .btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:#1e40af;color:#fff}
+    .btn-primary:hover{background:#1e3a8a}
+    .btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+    .error-msg{color:#dc2626;text-align:center;margin-top:12px;font-size:14px}
+    .app{display:none;min-height:100vh}
+    .app.active{display:flex}
+    .sidebar{width:220px;background:#1e3a8a;color:#fff;padding:24px 0;position:fixed;top:0;right:0;height:100vh;z-index:10}
+    .sidebar h2{text-align:center;padding:0 16px 24px;border-bottom:1px solid rgba(255,255,255,.15);font-size:22px}
+    .sidebar nav{padding:16px 0}
+    .sidebar nav a{display:block;padding:12px 24px;color:rgba(255,255,255,.7);text-decoration:none;font-size:15px;cursor:pointer}
+    .sidebar nav a:hover,.sidebar nav a.active{color:#fff;background:rgba(255,255,255,.1)}
+    .sidebar .sign-out{position:absolute;bottom:24px;right:0;left:0;padding:0 16px}
+    .sidebar .sign-out button{width:100%;padding:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;cursor:pointer;font-size:14px}
+    .main{margin-right:220px;flex:1;padding:32px}
+    .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:24px;margin-bottom:24px}
+    .card h3{font-size:18px;margin-bottom:16px;color:#111827}
+    table{width:100%;border-collapse:collapse}
+    th{text-align:right;padding:12px 16px;background:#f8fafc;color:#6b7280;font-size:13px;font-weight:600;border-bottom:1px solid #e5e7eb}
+    td{padding:12px 16px;border-bottom:1px solid #f1f5f9;font-size:14px}
+    tr:hover td{background:#f8fafc}
+    .clickable{cursor:pointer}
+    .btn-sm{padding:6px 14px;border-radius:8px;border:none;font-size:13px;cursor:pointer;font-weight:600;margin-left:4px}
+    .btn-danger{background:#fee2e2;color:#dc2626}
+    .btn-danger:hover{background:#fecaca}
+    .btn-edit{background:#dbeafe;color:#1e40af}
+    .btn-edit:hover{background:#bfdbfe}
+    .btn-success{background:#dcfce7;color:#16a34a}
+    .btn-success:hover{background:#bbf7d0}
+    .btn-back{background:#f3f4f6;color:#374151;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px;margin-bottom:16px}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:24px}
+    .stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center}
+    .stat-card .num{font-size:28px;font-weight:700;color:#1e40af}
+    .stat-card .label{font-size:13px;color:#6b7280;margin-top:4px}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .info-item{padding:12px;background:#f8fafc;border-radius:8px}
+    .info-item .label{font-size:12px;color:#6b7280;margin-bottom:4px}
+    .info-item .value{font-size:15px;color:#111827;font-weight:500}
+    .edit-form input,.edit-form textarea,.edit-form select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit}
+    .edit-form textarea{min-height:80px;resize:vertical}
+    .edit-form label{display:block;font-size:13px;color:#6b7280;margin-bottom:4px;font-weight:600}
+    .loading{text-align:center;padding:40px;color:#6b7280}
+    .badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+    .badge-blue{background:#dbeafe;color:#1e40af}
+    .badge-green{background:#dcfce7;color:#16a34a}
+    .badge-yellow{background:#fef3c7;color:#d97706}
+    .badge-red{background:#fee2e2;color:#dc2626}
+    .badge-gray{background:#f3f4f6;color:#6b7280}
+    .hidden{display:none}
+    .search-box{width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;margin-bottom:16px}
+    .search-box:focus{outline:none;border-color:#1e40af}
+    .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .filter-btn{padding:6px 16px;border-radius:20px;border:1px solid #d1d5db;background:#fff;cursor:pointer;font-size:13px;font-weight:500}
+    .filter-btn.active{background:#1e40af;color:#fff;border-color:#1e40af}
+    .proof-gallery{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .proof-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid #e5e7eb}
+    .proof-thumb:hover{border-color:#1e40af}
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:100}
+    .modal-overlay img{max-width:90vw;max-height:90vh;border-radius:12px}
+    .modal-close{position:absolute;top:20px;left:20px;background:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer}
+    .activity-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+    .activity-item:last-child{border:none}
+    .toggle{position:relative;display:inline-block;width:44px;height:24px}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#d1d5db;border-radius:24px;transition:.3s}
+    .toggle-slider:before{content:'';position:absolute;height:18px;width:18px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+    .toggle input:checked+.toggle-slider{background:#1e40af}
+    .toggle input:checked+.toggle-slider:before{transform:translateX(-20px)}
   </style>
 </head>
 <body>
@@ -66,21 +92,12 @@
     <h1>CarLog Admin</h1>
     <p id="login-subtitle">פאנל ניהול</p>
     <div id="login-step1">
-      <div class="form-group">
-        <label>אימייל</label>
-        <input type="email" id="login-email" placeholder="admin@example.com">
-      </div>
-      <div class="form-group">
-        <label>סיסמה</label>
-        <input type="password" id="login-password" placeholder="סיסמה">
-      </div>
+      <div class="form-group"><label>אימייל</label><input type="email" id="login-email" placeholder="admin@example.com"></div>
+      <div class="form-group"><label>סיסמה</label><input type="password" id="login-password" placeholder="סיסמה"></div>
       <button class="btn btn-primary" id="login-btn">כניסה</button>
     </div>
     <div id="login-step2" class="hidden">
-      <div class="form-group">
-        <label>קוד אימות (נשלח למייל)</label>
-        <input type="text" id="login-otp" placeholder="הזן קוד" style="text-align:center;font-size:24px;letter-spacing:8px;">
-      </div>
+      <div class="form-group"><label>קוד אימות (נשלח למייל)</label><input type="text" id="login-otp" placeholder="הזן קוד" style="text-align:center;font-size:24px;letter-spacing:8px"></div>
       <button class="btn btn-primary" id="otp-btn">אימות</button>
     </div>
     <div id="login-error" class="error-msg hidden"></div>
@@ -91,357 +108,463 @@
   <aside class="sidebar">
     <h2>CarLog Admin</h2>
     <nav>
-      <a id="nav-users" class="active" data-page="users">👥 משתמשים</a>
+      <a data-page="dashboard" class="active">📊 דשבורד</a>
+      <a data-page="users">👥 משתמשים</a>
+      <a data-page="transfers">🔄 העברות</a>
+      <a data-page="reports">📋 דוחות</a>
+      <a data-page="notifications">🔔 התראות</a>
+      <a data-page="settings">⚙️ הגדרות</a>
     </nav>
-    <div class="sign-out">
-      <button id="signout-btn">יציאה</button>
-    </div>
+    <div class="sign-out"><button id="signout-btn">יציאה</button></div>
   </aside>
   <main class="main" id="main-content"></main>
 </div>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const db = createClient(
-  'https://ulcebkhczxmeqzdhmsqg.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY2Via2hjenhtZXF6ZGhtc3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNjY3MjMsImV4cCI6MjA4ODY0MjcyM30.JJUNzO3l1BIEm4guBB2TI0WF1gv0bIMaOfo0L4z0u-w'
-);
-
-let otpEmail = '';
-
-function showError(msg) {
-  const el = document.getElementById('login-error');
-  if (msg) { el.textContent = msg; el.classList.remove('hidden'); }
-  else { el.classList.add('hidden'); }
-}
-
-function formatDate(d) {
-  if (!d) return '—';
-  try { return new Date(d).toLocaleDateString('he-IL'); } catch { return d; }
-}
+const db = createClient('https://ulcebkhczxmeqzdhmsqg.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY2Via2hjenhtZXF6ZGhtc3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNjY3MjMsImV4cCI6MjA4ODY0MjcyM30.JJUNzO3l1BIEm4guBB2TI0WF1gv0bIMaOfo0L4z0u-w');
+let otpEmail='',usersCache=[];
+const $=id=>document.getElementById(id);
+const main=()=>$('main-content');
+const fmt=d=>{if(!d)return'—';try{return new Date(d).toLocaleDateString('he-IL')}catch{return d}};
+const showErr=m=>{const e=$('login-error');if(m){e.textContent=m;e.classList.remove('hidden')}else e.classList.add('hidden')};
 
 // ===== AUTH =====
-
-document.getElementById('login-btn').addEventListener('click', async () => {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  showError('');
-  if (!email || !password) { showError('הזן אימייל וסיסמה'); return; }
-
-  document.getElementById('login-btn').disabled = true;
-  const { data, error } = await db.auth.signInWithPassword({ email, password });
-  if (error) { showError(error.message); document.getElementById('login-btn').disabled = false; return; }
-
-  const { data: admin } = await db.from('admins').select('user_id').eq('user_id', data.user.id).single();
-  if (!admin) { await db.auth.signOut(); showError('אין לך הרשאת מנהל'); document.getElementById('login-btn').disabled = false; return; }
-
-  otpEmail = email;
-  await db.auth.signOut();
-  const { error: otpErr } = await db.auth.signInWithOtp({ email });
-  if (otpErr) { showError(otpErr.message); document.getElementById('login-btn').disabled = false; return; }
-
-  document.getElementById('login-step1').classList.add('hidden');
-  document.getElementById('login-step2').classList.remove('hidden');
-  document.getElementById('login-subtitle').textContent = 'קוד אימות נשלח ל-' + email;
-  document.getElementById('login-btn').disabled = false;
+$('login-btn').addEventListener('click',async()=>{
+  const email=$('login-email').value,pw=$('login-password').value;
+  showErr('');if(!email||!pw){showErr('הזן אימייל וסיסמה');return}
+  $('login-btn').disabled=true;
+  const{data,error}=await db.auth.signInWithPassword({email,password:pw});
+  if(error){showErr(error.message);$('login-btn').disabled=false;return}
+  const{data:admin}=await db.from('admins').select('user_id').eq('user_id',data.user.id).single();
+  if(!admin){await db.auth.signOut();showErr('אין לך הרשאת מנהל');$('login-btn').disabled=false;return}
+  otpEmail=email;await db.auth.signOut();
+  const{error:oe}=await db.auth.signInWithOtp({email});
+  if(oe){showErr(oe.message);$('login-btn').disabled=false;return}
+  $('login-step1').classList.add('hidden');$('login-step2').classList.remove('hidden');
+  $('login-subtitle').textContent='קוד אימות נשלח ל-'+email;$('login-btn').disabled=false;
 });
-
-document.getElementById('otp-btn').addEventListener('click', async () => {
-  const token = document.getElementById('login-otp').value.trim();
-  showError('');
-  if (!token) { showError('הזן קוד אימות'); return; }
-
-  document.getElementById('otp-btn').disabled = true;
-  const { error } = await db.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
-  if (error) { showError('קוד שגוי או שפג תוקפו'); document.getElementById('otp-btn').disabled = false; return; }
+$('otp-btn').addEventListener('click',async()=>{
+  const t=$('login-otp').value.trim();showErr('');if(!t){showErr('הזן קוד');return}
+  $('otp-btn').disabled=true;
+  const{error}=await db.auth.verifyOtp({email:otpEmail,token:t,type:'email'});
+  if(error){showErr('קוד שגוי או שפג תוקפו');$('otp-btn').disabled=false;return}
   showApp();
 });
-
-document.getElementById('signout-btn').addEventListener('click', async () => {
-  await db.auth.signOut();
-  document.getElementById('app').classList.remove('active');
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-step1').classList.remove('hidden');
-  document.getElementById('login-step2').classList.add('hidden');
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-password').value = '';
-  document.getElementById('login-otp').value = '';
-  showError('');
+$('signout-btn').addEventListener('click',async()=>{
+  await db.auth.signOut();$('app').classList.remove('active');$('login-screen').style.display='flex';
+  $('login-step1').classList.remove('hidden');$('login-step2').classList.add('hidden');
+  $('login-email').value='';$('login-password').value='';$('login-otp').value='';showErr('');
 });
+document.querySelectorAll('.sidebar nav a').forEach(a=>a.addEventListener('click',()=>{
+  document.querySelectorAll('.sidebar nav a').forEach(x=>x.classList.remove('active'));
+  a.classList.add('active');showPage(a.dataset.page);
+}));
 
-document.getElementById('nav-users').addEventListener('click', () => loadUsers());
+function showApp(){$('login-screen').style.display='none';$('app').classList.add('active');showPage('dashboard')}
+function showPage(p){
+  if(p==='dashboard')loadDashboard();
+  else if(p==='users')loadUsers();
+  else if(p==='transfers')loadTransfers();
+  else if(p==='reports')loadReports();
+  else if(p==='notifications')loadNotifications();
+  else if(p==='settings')loadSettings();
+}
 
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('active');
-  loadUsers();
+async function fetchUsers(){
+  if(usersCache.length)return usersCache;
+  const{data}=await db.rpc('admin_list_users');usersCache=data||[];return usersCache;
+}
+function emailOf(uid){const u=usersCache.find(x=>x.id===uid);return u?u.email:'—'}
+
+// ===== DASHBOARD =====
+async function loadDashboard(){
+  main().innerHTML='<div class="loading">טוען דשבורד...</div>';
+  const[users,vRes,sRes,rRes,tRes,recentSvc]=await Promise.all([
+    fetchUsers(),
+    db.from('vehicles').select('id',{count:'exact',head:true}),
+    db.from('service_records').select('id',{count:'exact',head:true}),
+    db.from('shared_reports').select('id',{count:'exact',head:true}).gt('expires_at',new Date().toISOString()),
+    db.from('vehicle_transfers').select('id',{count:'exact',head:true}).eq('status','pending'),
+    db.from('service_records').select('*, vehicles(make,model,license_plate)').order('created_at',{ascending:false}).limit(5)
+  ]);
+  const recent5=users.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,5);
+  main().innerHTML=`
+    <h2 style="margin-bottom:24px;font-size:24px">📊 דשבורד</h2>
+    <div class="stats">
+      <div class="stat-card"><div class="num">${users.length}</div><div class="label">משתמשים</div></div>
+      <div class="stat-card"><div class="num">${vRes.count||0}</div><div class="label">רכבים</div></div>
+      <div class="stat-card"><div class="num">${sRes.count||0}</div><div class="label">טיפולים</div></div>
+      <div class="stat-card"><div class="num">${rRes.count||0}</div><div class="label">דוחות פעילים</div></div>
+      <div class="stat-card"><div class="num">${tRes.count||0}</div><div class="label">העברות ממתינות</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="card"><h3>משתמשים אחרונים</h3><div id="recent-users"></div></div>
+      <div class="card"><h3>טיפולים אחרונים</h3><div id="recent-services"></div></div>
+    </div>`;
+  const ru=$('recent-users');
+  recent5.forEach(u=>{const d=document.createElement('div');d.className='activity-item';d.innerHTML=`<span>${u.email}</span><span style="color:#6b7280">${fmt(u.created_at)}</span>`;d.style.cursor='pointer';d.addEventListener('click',()=>loadUserDetail(u.id));ru.appendChild(d)});
+  const rs=$('recent-services');
+  (recentSvc.data||[]).forEach(s=>{const d=document.createElement('div');d.className='activity-item';d.innerHTML=`<span>${s.vehicles?s.vehicles.make+' '+s.vehicles.model+' ('+s.vehicles.license_plate+')':'—'}</span><span style="color:#6b7280">${s.work_done.substring(0,30)} · ${fmt(s.date)}</span>`;rs.appendChild(d)});
 }
 
 // ===== USERS =====
-
-async function loadUsers() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading">טוען...</div>';
-
-  const { data: users, error } = await db.rpc('admin_list_users');
-  if (error) { main.innerHTML = '<div class="card"><p>שגיאה: ' + error.message + '</p></div>'; return; }
-
-  const { data: vehicles } = await db.from('vehicles').select('user_id');
-  const vc = {};
-  (vehicles || []).forEach(v => { vc[v.user_id] = (vc[v.user_id] || 0) + 1; });
-
-  let rows = users.map(u => {
-    const tr = document.createElement('tr');
-    tr.className = 'clickable';
-    tr.innerHTML = '<td>' + (u.email || '—') + '</td><td><span class="badge">' + (vc[u.id] || 0) + '</span></td><td>' + formatDate(u.created_at) + '</td><td>' + formatDate(u.last_sign_in_at) + '</td><td><button class="btn-sm btn-danger del-user-btn">מחק</button></td>';
-    tr.addEventListener('click', (e) => { if (!e.target.classList.contains('del-user-btn')) loadUserDetail(u.id); });
-    tr.querySelector('.del-user-btn').addEventListener('click', () => deleteUser(u.id, u.email));
-    return tr;
-  });
-
-  main.innerHTML = '<div class="stats"><div class="stat-card"><div class="num">' + users.length + '</div><div class="label">משתמשים</div></div><div class="stat-card"><div class="num">' + (vehicles || []).length + '</div><div class="label">רכבים</div></div></div><div class="card"><h3>משתמשים</h3><table><thead><tr><th>אימייל</th><th>רכבים</th><th>הצטרפות</th><th>כניסה אחרונה</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table></div>';
-  const tbody = document.getElementById('users-tbody');
-  rows.forEach(r => tbody.appendChild(r));
+async function loadUsers(){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  const users=await fetchUsers();
+  const{data:vehicles}=await db.from('vehicles').select('user_id');
+  const vc={};(vehicles||[]).forEach(v=>{vc[v.user_id]=(vc[v.user_id]||0)+1});
+  main().innerHTML=`
+    <h2 style="margin-bottom:24px;font-size:24px">👥 משתמשים</h2>
+    <input class="search-box" id="user-search" placeholder="חיפוש לפי אימייל..." oninput="">
+    <div class="card"><table><thead><tr><th>אימייל</th><th>רכבים</th><th>הצטרפות</th><th>כניסה אחרונה</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table></div>`;
+  const tbody=$('users-tbody');
+  function render(list){
+    tbody.innerHTML='';
+    list.forEach(u=>{const tr=document.createElement('tr');tr.className='clickable';
+      tr.innerHTML=`<td>${u.email||'—'}</td><td><span class="badge badge-blue">${vc[u.id]||0}</span></td><td>${fmt(u.created_at)}</td><td>${fmt(u.last_sign_in_at)}</td><td><button class="btn-sm btn-danger del">מחק</button></td>`;
+      tr.addEventListener('click',e=>{if(!e.target.classList.contains('del'))loadUserDetail(u.id)});
+      tr.querySelector('.del').addEventListener('click',()=>deleteUser(u.id,u.email));
+      tbody.appendChild(tr);
+    });
+  }
+  render(users);
+  $('user-search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();render(users.filter(u=>(u.email||'').toLowerCase().includes(q)))});
 }
 
-async function deleteUser(userId, email) {
-  if (!confirm('למחוק את המשתמש ' + email + '?')) return;
-  if (!confirm('פעולה זו תמחק את כל נתוני המשתמש. להמשיך?')) return;
-  const { error } = await db.rpc('admin_delete_user', { target_user_id: userId });
-  if (error) { alert('שגיאה: ' + error.message); return; }
-  loadUsers();
+async function deleteUser(uid,email){
+  if(!confirm('למחוק את '+email+'?'))return;
+  if(!confirm('כל הנתונים יימחקו. להמשיך?'))return;
+  const{error}=await db.rpc('admin_delete_user',{target_user_id:uid});
+  if(error){alert('שגיאה: '+error.message);return}
+  usersCache=usersCache.filter(u=>u.id!==uid);loadUsers();
 }
 
 // ===== USER DETAIL =====
+async function loadUserDetail(uid){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  const users=await fetchUsers();const user=users.find(u=>u.id===uid);
+  if(!user){main().innerHTML='<div class="card"><p>לא נמצא</p></div>';return}
+  const[{data:vehicles},{data:profile}]=await Promise.all([
+    db.from('vehicles').select('*').eq('user_id',uid),
+    db.from('profiles').select('*').eq('id',uid).single()
+  ]);
+  const vIds=(vehicles||[]).map(v=>v.id);let sc={};
+  if(vIds.length){const{data:svcs}=await db.from('service_records').select('vehicle_id').in('vehicle_id',vIds);(svcs||[]).forEach(s=>{sc[s.vehicle_id]=(sc[s.vehicle_id]||0)+1})}
+  const m=main();m.innerHTML='';
+  const back=document.createElement('button');back.className='btn-back';back.textContent='← חזרה למשתמשים';back.addEventListener('click',loadUsers);m.appendChild(back);
 
-async function loadUserDetail(userId) {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading">טוען...</div>';
+  // User info
+  const c1=document.createElement('div');c1.className='card';
+  c1.innerHTML=`<h3>פרטי משתמש</h3><div class="info-grid">
+    <div class="info-item"><div class="label">אימייל</div><div class="value">${user.email||'—'}</div></div>
+    <div class="info-item"><div class="label">ID</div><div class="value" style="font-size:11px;font-family:monospace;word-break:break-all">${user.id}</div></div>
+    <div class="info-item"><div class="label">הצטרפות</div><div class="value">${fmt(user.created_at)}</div></div>
+    <div class="info-item"><div class="label">כניסה אחרונה</div><div class="value">${fmt(user.last_sign_in_at)}</div></div>
+  </div>`;
+  m.appendChild(c1);
 
-  const { data: users } = await db.rpc('admin_list_users');
-  const user = (users || []).find(u => u.id === userId);
-  if (!user) { main.innerHTML = '<div class="card"><p>משתמש לא נמצא</p></div>'; return; }
-
-  const { data: vehicles } = await db.from('vehicles').select('*').eq('user_id', userId);
-  const vIds = (vehicles || []).map(v => v.id);
-  let sc = {};
-  if (vIds.length > 0) {
-    const { data: svcs } = await db.from('service_records').select('vehicle_id').in('vehicle_id', vIds);
-    (svcs || []).forEach(s => { sc[s.vehicle_id] = (sc[s.vehicle_id] || 0) + 1; });
+  // Profile
+  if(profile){
+    const cp=document.createElement('div');cp.className='card';
+    cp.innerHTML=`<h3>פרופיל</h3><div class="info-grid">
+      <div class="info-item"><div class="label">שם פרטי</div><div class="value">${profile.first_name||'—'}</div></div>
+      <div class="info-item"><div class="label">שם משפחה</div><div class="value">${profile.last_name||'—'}</div></div>
+      <div class="info-item"><div class="label">טלפון</div><div class="value">${profile.phone||'—'}</div></div>
+      <div class="info-item"><div class="label">התראות טסט</div><div class="value">${profile.mot_alerts?'✅ פעיל':'❌ כבוי'}</div></div>
+      <div class="info-item"><div class="label">התראות טיפול</div><div class="value">${profile.service_alerts?'✅ פעיל':'❌ כבוי'}</div></div>
+    </div>`;
+    m.appendChild(cp);
   }
 
-  main.innerHTML = '<div class="card"><h3>פרטי משתמש</h3><div class="info-grid"><div class="info-item"><div class="label">אימייל</div><div class="value">' + (user.email || '—') + '</div></div><div class="info-item"><div class="label">ID</div><div class="value" style="font-size:11px;font-family:monospace;word-break:break-all;">' + user.id + '</div></div><div class="info-item"><div class="label">הצטרפות</div><div class="value">' + formatDate(user.created_at) + '</div></div><div class="info-item"><div class="label">כניסה אחרונה</div><div class="value">' + formatDate(user.last_sign_in_at) + '</div></div></div></div><div class="card"><h3>רכבים (' + (vehicles || []).length + ')</h3><table><thead><tr><th>רכב</th><th>לוחית</th><th>שנה</th><th>טיפולים</th><th></th></tr></thead><tbody id="vehicles-tbody"></tbody></table></div>';
+  // Vehicles
+  const c2=document.createElement('div');c2.className='card';
+  c2.innerHTML=`<h3>רכבים (${(vehicles||[]).length})</h3>`;
+  if(!(vehicles||[]).length){c2.innerHTML+='<p style="color:#6b7280">אין רכבים</p>'}
+  else{
+    const tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>רכב</th><th>לוחית</th><th>שנה</th><th>סטטוס</th><th>טיפולים</th><th></th></tr></thead>';
+    const tb=document.createElement('tbody');
+    (vehicles||[]).forEach(v=>{
+      const tr=document.createElement('tr');tr.className='clickable';
+      const statusBadge=v.status==='sold'?'<span class="badge badge-red">נמכר</span>':'<span class="badge badge-green">פעיל</span>';
+      tr.innerHTML=`<td>${v.make} ${v.model}</td><td>${v.license_plate}</td><td>${v.year}</td><td>${statusBadge}</td><td><span class="badge badge-blue">${sc[v.id]||0}</span></td><td><button class="btn-sm btn-danger del">מחק</button></td>`;
+      tr.addEventListener('click',e=>{if(!e.target.classList.contains('del'))loadVehicleDetail(v.id,uid)});
+      tr.querySelector('.del').addEventListener('click',()=>deleteVehicle(v.id,uid));
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);c2.appendChild(tbl);
+  }
+  m.appendChild(c2);
 
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'btn-back';
-  backBtn.textContent = '← חזרה למשתמשים';
-  backBtn.addEventListener('click', () => loadUsers());
-  main.insertBefore(backBtn, main.firstChild);
-
-  // Delete user button
-  const delBtn = document.createElement('button');
-  delBtn.className = 'btn-sm btn-danger';
-  delBtn.textContent = 'מחק משתמש';
-  delBtn.style.marginTop = '16px';
-  delBtn.addEventListener('click', () => deleteUser(userId, user.email));
-  main.appendChild(delBtn);
-
-  const tbody = document.getElementById('vehicles-tbody');
-  (vehicles || []).forEach(v => {
-    const tr = document.createElement('tr');
-    tr.className = 'clickable';
-    tr.innerHTML = '<td>' + v.make + ' ' + v.model + '</td><td>' + v.license_plate + '</td><td>' + v.year + '</td><td><span class="badge">' + (sc[v.id] || 0) + '</span></td><td><button class="btn-sm btn-danger del-v-btn">מחק</button></td>';
-    tr.addEventListener('click', (e) => { if (!e.target.classList.contains('del-v-btn')) loadVehicleDetail(v.id, userId); });
-    tr.querySelector('.del-v-btn').addEventListener('click', () => deleteVehicle(v.id, userId));
-    tbody.appendChild(tr);
-  });
+  const del=document.createElement('button');del.className='btn-sm btn-danger';del.textContent='מחק משתמש';del.style.marginTop='16px';
+  del.addEventListener('click',()=>deleteUser(uid,user.email));m.appendChild(del);
 }
 
 // ===== VEHICLE DETAIL =====
+async function loadVehicleDetail(vid,uid){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  const[{data:v},{data:services}]=await Promise.all([
+    db.from('vehicles').select('*').eq('id',vid).single(),
+    db.from('service_records').select('*').eq('vehicle_id',vid).order('date',{ascending:false})
+  ]);
+  if(!v){main().innerHTML='<div class="card"><p>לא נמצא</p></div>';return}
 
-async function loadVehicleDetail(vehicleId, userId) {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="loading">טוען...</div>';
+  // Get proofs for all services
+  const sIds=(services||[]).map(s=>s.id);
+  let proofsMap={};
+  if(sIds.length){
+    const{data:proofs}=await db.from('service_proofs').select('*').in('service_record_id',sIds);
+    (proofs||[]).forEach(p=>{if(!proofsMap[p.service_record_id])proofsMap[p.service_record_id]=[];proofsMap[p.service_record_id].push(p)});
+  }
 
-  const { data: vehicle } = await db.from('vehicles').select('*').eq('id', vehicleId).single();
-  if (!vehicle) { main.innerHTML = '<div class="card"><p>רכב לא נמצא</p></div>'; return; }
+  const cost=(services||[]).reduce((s,x)=>s+(x.cost||0),0);
+  const m=main();m.innerHTML='';
+  const back=document.createElement('button');back.className='btn-back';back.textContent='← חזרה למשתמש';
+  back.addEventListener('click',()=>loadUserDetail(uid));m.appendChild(back);
 
-  const { data: services } = await db.from('service_records').select('*').eq('vehicle_id', vehicleId).order('date', { ascending: false });
-  const totalCost = (services || []).reduce((sum, s) => sum + (s.cost || 0), 0);
+  m.insertAdjacentHTML('beforeend',`
+    <div class="stats">
+      <div class="stat-card"><div class="num">${(services||[]).length}</div><div class="label">טיפולים</div></div>
+      <div class="stat-card"><div class="num">₪${cost.toLocaleString()}</div><div class="label">סה"כ עלות</div></div>
+    </div>`);
 
-  main.innerHTML = '';
+  // Vehicle card
+  const vc=document.createElement('div');vc.className='card';
+  vc.innerHTML=`<h3>${v.make} ${v.model} ${v.year} — ${v.license_plate}</h3>
+    <div class="info-grid">
+      <div class="info-item"><div class="label">יצרן</div><div class="value">${v.make}</div></div>
+      <div class="info-item"><div class="label">דגם</div><div class="value">${v.model}</div></div>
+      <div class="info-item"><div class="label">שנה</div><div class="value">${v.year}</div></div>
+      <div class="info-item"><div class="label">לוחית</div><div class="value">${v.license_plate}</div></div>
+      <div class="info-item"><div class="label">דלק</div><div class="value">${v.sug_delek||'—'}</div></div>
+      <div class="info-item"><div class="label">גיר</div><div class="value">${v.gir||'—'}</div></div>
+      <div class="info-item"><div class="label">ק"מ</div><div class="value">${v.current_mileage?v.current_mileage.toLocaleString():'—'}</div></div>
+      <div class="info-item"><div class="label">טסט</div><div class="value">${v.tokef_dt||'—'}</div></div>
+    </div>`;
+  const btns=document.createElement('div');btns.style.marginTop='16px';
+  const eb=document.createElement('button');eb.className='btn-sm btn-edit';eb.textContent='עריכה';
+  eb.addEventListener('click',()=>showVehicleEdit(vid,uid,v));
+  const db2=document.createElement('button');db2.className='btn-sm btn-danger';db2.textContent='מחק רכב';
+  db2.addEventListener('click',()=>deleteVehicle(vid,uid));
+  btns.appendChild(eb);btns.appendChild(db2);vc.appendChild(btns);m.appendChild(vc);
 
-  const backBtn = document.createElement('button');
-  backBtn.className = 'btn-back';
-  backBtn.textContent = '← חזרה למשתמש';
-  backBtn.addEventListener('click', () => loadUserDetail(userId));
-  main.appendChild(backBtn);
+  // Services with proofs
+  const sc=document.createElement('div');sc.className='card';sc.innerHTML='<h3>היסטוריית טיפולים</h3>';
+  if(!(services||[]).length){sc.innerHTML+='<p style="color:#6b7280">אין טיפולים</p>'}
+  else{
+    (services||[]).forEach(s=>{
+      const proofs=proofsMap[s.id]||[];
+      const hasReceipt=proofs.some(p=>p.type==='receipt');
+      const hasOdo=proofs.some(p=>p.type==='odometer');
+      const badge=proofs.length===0?'⚪':hasReceipt&&hasOdo?'🟢':'🟡';
 
-  // Stats
-  const statsDiv = document.createElement('div');
-  statsDiv.className = 'stats';
-  statsDiv.innerHTML = '<div class="stat-card"><div class="num">' + (services || []).length + '</div><div class="label">טיפולים</div></div><div class="stat-card"><div class="num">₪' + totalCost.toLocaleString() + '</div><div class="label">סה"כ עלות</div></div>';
-  main.appendChild(statsDiv);
+      const row=document.createElement('div');row.style.cssText='padding:16px 0;border-bottom:1px solid #f1f5f9';
+      row.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>${fmt(s.date)}</strong> · ${s.work_done} · ₪${s.cost||0} ${s.mileage?'· '+s.mileage.toLocaleString()+' ק"מ':''}</div>
+          <div>${badge} <button class="btn-sm btn-edit svc-edit">ערוך</button><button class="btn-sm btn-danger svc-del">מחק</button></div>
+        </div>`;
+      if(s.notes)row.insertAdjacentHTML('beforeend',`<div style="color:#6b7280;font-size:13px;margin-top:4px">${s.notes}</div>`);
 
-  // Vehicle info
-  const vCard = document.createElement('div');
-  vCard.className = 'card';
-  vCard.innerHTML = '<h3>' + vehicle.make + ' ' + vehicle.model + ' ' + vehicle.year + ' — ' + vehicle.license_plate + '</h3><div class="info-grid"><div class="info-item"><div class="label">יצרן</div><div class="value">' + vehicle.make + '</div></div><div class="info-item"><div class="label">דגם</div><div class="value">' + vehicle.model + '</div></div><div class="info-item"><div class="label">שנה</div><div class="value">' + vehicle.year + '</div></div><div class="info-item"><div class="label">לוחית</div><div class="value">' + vehicle.license_plate + '</div></div><div class="info-item"><div class="label">דלק</div><div class="value">' + (vehicle.sug_delek || '—') + '</div></div><div class="info-item"><div class="label">גיר</div><div class="value">' + (vehicle.gir || '—') + '</div></div><div class="info-item"><div class="label">ק"מ</div><div class="value">' + (vehicle.current_mileage ? vehicle.current_mileage.toLocaleString() : '—') + '</div></div><div class="info-item"><div class="label">טסט</div><div class="value">' + (vehicle.tokef_dt || '—') + '</div></div></div>';
+      // Proofs gallery
+      if(proofs.length){
+        const gallery=document.createElement('div');gallery.className='proof-gallery';
+        proofs.forEach(p=>{
+          const wrap=document.createElement('div');wrap.style.position='relative';
+          const img=document.createElement('img');img.className='proof-thumb';img.src=p.image_url;img.alt=p.type;
+          img.addEventListener('click',()=>showImageModal(p.image_url));
+          const delBtn=document.createElement('button');delBtn.textContent='✕';
+          delBtn.style.cssText='position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer';
+          delBtn.addEventListener('click',async()=>{if(!confirm('למחוק תמונה?'))return;await db.from('service_proofs').delete().eq('id',p.id);loadVehicleDetail(vid,uid)});
+          wrap.appendChild(img);wrap.appendChild(delBtn);gallery.appendChild(wrap);
+        });
+        row.appendChild(gallery);
+      }
+      row.querySelector('.svc-edit').addEventListener('click',()=>showServiceEdit(s,vid,uid));
+      row.querySelector('.svc-del').addEventListener('click',()=>deleteService(s.id,vid,uid));
+      sc.appendChild(row);
+    });
+  }
+  m.appendChild(sc);
+}
 
-  const editBtn = document.createElement('button');
-  editBtn.className = 'btn-sm btn-edit';
-  editBtn.textContent = 'עריכה';
-  editBtn.style.marginTop = '16px';
-  editBtn.addEventListener('click', () => showVehicleEdit(vehicleId, userId, vehicle));
+function showImageModal(url){
+  const ov=document.createElement('div');ov.className='modal-overlay';
+  ov.innerHTML=`<button class="modal-close">✕</button><img src="${url}">`;
+  ov.addEventListener('click',e=>{if(e.target===ov||e.target.classList.contains('modal-close'))ov.remove()});
+  document.body.appendChild(ov);
+}
 
-  const delVBtn = document.createElement('button');
-  delVBtn.className = 'btn-sm btn-danger';
-  delVBtn.textContent = 'מחק רכב';
-  delVBtn.style.marginTop = '16px';
-  delVBtn.style.marginRight = '8px';
-  delVBtn.addEventListener('click', () => deleteVehicle(vehicleId, userId));
+function showVehicleEdit(vid,uid,v){
+  const m=main();m.innerHTML='';
+  const back=document.createElement('button');back.className='btn-back';back.textContent='← חזרה';
+  back.addEventListener('click',()=>loadVehicleDetail(vid,uid));m.appendChild(back);
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML=`<h3>עריכת רכב</h3><div class="edit-form">
+    <label>לוחית</label><input id="e-plate" value="${v.license_plate}">
+    <label>יצרן</label><input id="e-make" value="${v.make}">
+    <label>דגם</label><input id="e-model" value="${v.model}">
+    <label>שנה</label><input id="e-year" type="number" value="${v.year}">
+    <label>ק"מ</label><input id="e-km" type="number" value="${v.current_mileage||''}">
+  </div>`;
+  const sb=document.createElement('button');sb.className='btn btn-primary';sb.style.cssText='width:auto;padding:10px 32px;margin-top:16px';sb.textContent='שמור';
+  sb.addEventListener('click',async()=>{
+    const{error}=await db.from('vehicles').update({license_plate:$('e-plate').value,make:$('e-make').value,model:$('e-model').value,year:parseInt($('e-year').value),current_mileage:$('e-km').value?parseInt($('e-km').value):null}).eq('id',vid);
+    if(error){alert(error.message);return}loadVehicleDetail(vid,uid);
+  });
+  c.querySelector('.edit-form').appendChild(sb);m.appendChild(c);
+}
 
-  const btnsDiv = document.createElement('div');
-  btnsDiv.appendChild(editBtn);
-  btnsDiv.appendChild(delVBtn);
-  vCard.appendChild(btnsDiv);
-  main.appendChild(vCard);
+async function deleteVehicle(vid,uid){
+  if(!confirm('למחוק רכב? כל הטיפולים יימחקו.'))return;
+  await db.from('vehicles').delete().eq('id',vid);loadUserDetail(uid);
+}
 
-  // Services
-  const sCard = document.createElement('div');
-  sCard.className = 'card';
-  sCard.innerHTML = '<h3>היסטוריית טיפולים</h3>';
+function showServiceEdit(s,vid,uid){
+  const m=main();m.innerHTML='';
+  const back=document.createElement('button');back.className='btn-back';back.textContent='← חזרה';
+  back.addEventListener('click',()=>loadVehicleDetail(vid,uid));m.appendChild(back);
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML=`<h3>עריכת טיפול</h3><div class="edit-form">
+    <label>תאריך</label><input id="s-date" type="date" value="${s.date}" style="direction:ltr">
+    <label>עבודה</label><textarea id="s-work">${s.work_done}</textarea>
+    <label>עלות (₪)</label><input id="s-cost" type="number" value="${s.cost||0}">
+    <label>ק"מ</label><input id="s-km" type="number" value="${s.mileage||''}">
+    <label>הערות</label><textarea id="s-notes">${s.notes||''}</textarea>
+  </div>`;
+  const sb=document.createElement('button');sb.className='btn btn-primary';sb.style.cssText='width:auto;padding:10px 32px;margin-top:16px';sb.textContent='שמור';
+  sb.addEventListener('click',async()=>{
+    const w=$('s-work').value;if(!w){alert('שדה עבודה הוא חובה');return}
+    await db.from('service_records').update({date:$('s-date').value,work_done:w,cost:parseFloat($('s-cost').value)||0,mileage:$('s-km').value?parseInt($('s-km').value):null,notes:$('s-notes').value}).eq('id',s.id);
+    loadVehicleDetail(vid,uid);
+  });
+  c.querySelector('.edit-form').appendChild(sb);m.appendChild(c);
+}
 
-  if ((services || []).length === 0) {
-    sCard.innerHTML += '<p style="color:#6b7280">אין טיפולים</p>';
-  } else {
-    const tbl = document.createElement('table');
-    tbl.innerHTML = '<thead><tr><th>תאריך</th><th>עבודה</th><th>עלות</th><th>ק"מ</th><th></th></tr></thead>';
-    const tb = document.createElement('tbody');
-    (services || []).forEach(s => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + formatDate(s.date) + '</td><td>' + s.work_done + '</td><td>₪' + (s.cost || 0) + '</td><td>' + (s.mileage ? s.mileage.toLocaleString() : '—') + '</td><td></td>';
-      const td = tr.querySelector('td:last-child');
+async function deleteService(sid,vid,uid){
+  if(!confirm('למחוק טיפול?'))return;
+  await db.from('service_records').delete().eq('id',sid);loadVehicleDetail(vid,uid);
+}
 
-      const eBtn = document.createElement('button');
-      eBtn.className = 'btn-sm btn-edit';
-      eBtn.textContent = 'ערוך';
-      eBtn.addEventListener('click', () => showServiceEdit(s, vehicleId, userId));
+// ===== TRANSFERS =====
+async function loadTransfers(){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  await fetchUsers();
+  const{data:transfers}=await db.from('vehicle_transfers').select('*, vehicles(make,model,license_plate,year)').order('created_at',{ascending:false});
+  let filter='all';
+  const m=main();m.innerHTML=`<h2 style="margin-bottom:24px;font-size:24px">🔄 העברות בעלות</h2><div class="filter-bar" id="t-filters"></div><div id="t-content"></div>`;
 
-      const dBtn = document.createElement('button');
-      dBtn.className = 'btn-sm btn-danger';
-      dBtn.textContent = 'מחק';
-      dBtn.style.marginRight = '4px';
-      dBtn.addEventListener('click', () => deleteService(s.id, vehicleId, userId));
+  const filters=$('t-filters');
+  ['all','pending','approved','rejected'].forEach(f=>{
+    const b=document.createElement('button');b.className='filter-btn'+(f==='all'?' active':'');
+    b.textContent={all:'הכל',pending:'ממתינות',approved:'מאושרות',rejected:'נדחו'}[f];
+    b.addEventListener('click',()=>{filter=f;filters.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+    filters.appendChild(b);
+  });
 
-      td.appendChild(eBtn);
-      td.appendChild(dBtn);
+  function render(){
+    const list=filter==='all'?transfers:(transfers||[]).filter(t=>t.status===filter);
+    const c=$('t-content');c.innerHTML='';
+    if(!list||!list.length){c.innerHTML='<div class="card"><p style="color:#6b7280">אין העברות</p></div>';return}
+    const card=document.createElement('div');card.className='card';
+    const tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>רכב</th><th>מוכר</th><th>קונה</th><th>תאריך</th><th>סטטוס</th><th></th></tr></thead>';
+    const tb=document.createElement('tbody');
+    list.forEach(t=>{
+      const tr=document.createElement('tr');
+      const statusBadge={pending:'badge-yellow',approved:'badge-green',rejected:'badge-red',cancelled:'badge-gray'}[t.status]||'badge-gray';
+      const statusText={pending:'ממתין',approved:'מאושר',rejected:'נדחה',cancelled:'בוטל'}[t.status]||t.status;
+      const vName=t.vehicles?`${t.vehicles.make} ${t.vehicles.model} (${t.vehicles.license_plate})`:'—';
+      tr.innerHTML=`<td>${vName}</td><td>${emailOf(t.from_user_id)}</td><td>${emailOf(t.to_user_id)}</td><td>${fmt(t.created_at)}</td><td><span class="badge ${statusBadge}">${statusText}</span></td><td id="t-actions-${t.id}"></td>`;
+      if(t.status==='pending'){
+        const td=document.createElement('td');
+        const ap=document.createElement('button');ap.className='btn-sm btn-success';ap.textContent='אשר';
+        ap.addEventListener('click',async()=>{if(!confirm('לאשר העברה?'))return;await db.from('vehicle_transfers').update({status:'approved',completed_at:new Date().toISOString()}).eq('id',t.id);loadTransfers()});
+        const rj=document.createElement('button');rj.className='btn-sm btn-danger';rj.textContent='דחה';
+        rj.addEventListener('click',async()=>{if(!confirm('לדחות העברה?'))return;await db.from('vehicle_transfers').update({status:'rejected'}).eq('id',t.id);loadTransfers()});
+        tr.lastElementChild.appendChild(ap);tr.lastElementChild.appendChild(rj);
+      }
       tb.appendChild(tr);
     });
-    tbl.appendChild(tb);
-    sCard.appendChild(tbl);
+    tbl.appendChild(tb);card.appendChild(tbl);c.appendChild(card);
   }
-  main.appendChild(sCard);
+  render();
 }
 
-function showVehicleEdit(vehicleId, userId, v) {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '';
-
-  const backBtn = document.createElement('button');
-  backBtn.className = 'btn-back';
-  backBtn.textContent = '← חזרה לרכב';
-  backBtn.addEventListener('click', () => loadVehicleDetail(vehicleId, userId));
-  main.appendChild(backBtn);
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = '<h3>עריכת רכב</h3><div class="edit-form"><label>לוחית רישוי</label><input id="e-plate" value="' + v.license_plate + '"><label>יצרן</label><input id="e-make" value="' + v.make + '"><label>דגם</label><input id="e-model" value="' + v.model + '"><label>שנה</label><input id="e-year" type="number" value="' + v.year + '"><label>ק"מ נוכחי</label><input id="e-km" type="number" value="' + (v.current_mileage || '') + '"></div>';
-
-  const saveBtn = document.createElement('button');
-  saveBtn.className = 'btn btn-primary';
-  saveBtn.style.width = 'auto';
-  saveBtn.style.padding = '10px 32px';
-  saveBtn.style.marginTop = '16px';
-  saveBtn.textContent = 'שמור';
-  saveBtn.addEventListener('click', async () => {
-    const { error } = await db.from('vehicles').update({
-      license_plate: document.getElementById('e-plate').value,
-      make: document.getElementById('e-make').value,
-      model: document.getElementById('e-model').value,
-      year: parseInt(document.getElementById('e-year').value),
-      current_mileage: document.getElementById('e-km').value ? parseInt(document.getElementById('e-km').value) : null,
-    }).eq('id', vehicleId);
-    if (error) { alert('שגיאה: ' + error.message); return; }
-    loadVehicleDetail(vehicleId, userId);
+// ===== REPORTS =====
+async function loadReports(){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  await fetchUsers();
+  const{data:reports}=await db.from('shared_reports').select('*, vehicles(make,model,license_plate)').order('created_at',{ascending:false});
+  const now=new Date();
+  main().innerHTML=`<h2 style="margin-bottom:24px;font-size:24px">📋 דוחות משותפים</h2>`;
+  const card=document.createElement('div');card.className='card';
+  if(!(reports||[]).length){card.innerHTML='<p style="color:#6b7280">אין דוחות</p>';main().appendChild(card);return}
+  const tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>רכב</th><th>קוד</th><th>יוצר</th><th>נוצר</th><th>תפוגה</th><th>סטטוס</th><th></th></tr></thead>';
+  const tb=document.createElement('tbody');
+  (reports||[]).forEach(r=>{
+    const expired=new Date(r.expires_at)<now;
+    const vName=r.vehicles?`${r.vehicles.make} ${r.vehicles.model} (${r.vehicles.license_plate})`:'—';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${vName}</td><td style="font-family:monospace;letter-spacing:1px">${r.share_token}</td><td>${emailOf(r.user_id)}</td><td>${fmt(r.created_at)}</td><td>${fmt(r.expires_at)}</td><td><span class="badge ${expired?'badge-red':'badge-green'}">${expired?'פג תוקף':'פעיל'}</span></td><td></td>`;
+    const del=document.createElement('button');del.className='btn-sm btn-danger';del.textContent='מחק';
+    del.addEventListener('click',async()=>{if(!confirm('למחוק דוח?'))return;await db.from('shared_reports').delete().eq('id',r.id);loadReports()});
+    tr.lastElementChild.appendChild(del);tb.appendChild(tr);
   });
-
-  card.querySelector('.edit-form').appendChild(saveBtn);
-  main.appendChild(card);
+  tbl.appendChild(tb);card.appendChild(tbl);main().appendChild(card);
 }
 
-async function deleteVehicle(vehicleId, userId) {
-  if (!confirm('למחוק את הרכב? כל הטיפולים יימחקו גם.')) return;
-  const { error } = await db.from('vehicles').delete().eq('id', vehicleId);
-  if (error) { alert('שגיאה: ' + error.message); return; }
-  loadUserDetail(userId);
-}
-
-// ===== SERVICE EDIT =====
-
-function showServiceEdit(s, vehicleId, userId) {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '';
-
-  const backBtn = document.createElement('button');
-  backBtn.className = 'btn-back';
-  backBtn.textContent = '← חזרה לרכב';
-  backBtn.addEventListener('click', () => loadVehicleDetail(vehicleId, userId));
-  main.appendChild(backBtn);
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = '<h3>עריכת טיפול</h3><div class="edit-form"><label>תאריך</label><input id="s-date" type="date" value="' + s.date + '" style="direction:ltr"><label>עבודה שבוצעה</label><textarea id="s-work">' + s.work_done + '</textarea><label>עלות (₪)</label><input id="s-cost" type="number" value="' + (s.cost || 0) + '"><label>ק"מ</label><input id="s-km" type="number" value="' + (s.mileage || '') + '"><label>הערות</label><textarea id="s-notes">' + (s.notes || '') + '</textarea></div>';
-
-  const saveBtn = document.createElement('button');
-  saveBtn.className = 'btn btn-primary';
-  saveBtn.style.width = 'auto';
-  saveBtn.style.padding = '10px 32px';
-  saveBtn.style.marginTop = '16px';
-  saveBtn.textContent = 'שמור';
-  saveBtn.addEventListener('click', async () => {
-    const work = document.getElementById('s-work').value;
-    if (!work) { alert('שדה "עבודה שבוצעה" הוא חובה'); return; }
-    const { error } = await db.from('service_records').update({
-      date: document.getElementById('s-date').value,
-      work_done: work,
-      cost: parseFloat(document.getElementById('s-cost').value) || 0,
-      mileage: document.getElementById('s-km').value ? parseInt(document.getElementById('s-km').value) : null,
-      notes: document.getElementById('s-notes').value,
-    }).eq('id', s.id);
-    if (error) { alert('שגיאה: ' + error.message); return; }
-    loadVehicleDetail(vehicleId, userId);
+// ===== NOTIFICATIONS =====
+async function loadNotifications(){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  await fetchUsers();
+  const{data:logs}=await db.from('notification_log').select('*').order('sent_at',{ascending:false}).limit(100);
+  main().innerHTML=`<h2 style="margin-bottom:24px;font-size:24px">🔔 לוג התראות</h2>`;
+  const card=document.createElement('div');card.className='card';
+  if(!(logs||[]).length){card.innerHTML='<p style="color:#6b7280">אין התראות</p>';main().appendChild(card);return}
+  const tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>משתמש</th><th>סוג</th><th>תאריך שליחה</th></tr></thead>';
+  const tb=document.createElement('tbody');
+  (logs||[]).forEach(l=>{
+    const typeText={mot_30:'טסט - 30 יום',mot_7:'טסט - 7 ימים',mot_0:'טסט - היום!',service_overdue:'טיפול באיחור'}[l.notification_type]||l.notification_type;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${emailOf(l.user_id)}</td><td><span class="badge badge-yellow">${typeText}</span></td><td>${fmt(l.sent_at)}</td>`;
+    tb.appendChild(tr);
   });
-
-  card.querySelector('.edit-form').appendChild(saveBtn);
-  main.appendChild(card);
+  tbl.appendChild(tb);card.appendChild(tbl);main().appendChild(card);
 }
 
-async function deleteService(serviceId, vehicleId, userId) {
-  if (!confirm('למחוק את הטיפול?')) return;
-  const { error } = await db.from('service_records').delete().eq('id', serviceId);
-  if (error) { alert('שגיאה: ' + error.message); return; }
-  loadVehicleDetail(vehicleId, userId);
+// ===== SETTINGS =====
+async function loadSettings(){
+  main().innerHTML='<div class="loading">טוען...</div>';
+  const{data:settings}=await db.from('settings').select('key, value');
+  const map={};(settings||[]).forEach(s=>{map[s.key]=s.value});
+  main().innerHTML=`
+    <h2 style="margin-bottom:24px;font-size:24px">⚙️ הגדרות מערכת</h2>
+    <div class="card">
+      <h3>התראות</h3>
+      <div class="edit-form">
+        <label>ימים לפני תפוגת טסט להתראה</label>
+        <input id="set-mot" type="number" value="${map.mot_alert_days||30}">
+        <label>ימים עד שטיפול נחשב באיחור</label>
+        <input id="set-svc" type="number" value="${map.service_overdue_days||365}">
+      </div>
+    </div>`;
+  const sb=document.createElement('button');sb.className='btn btn-primary';sb.style.cssText='width:auto;padding:12px 40px';sb.textContent='שמור הגדרות';
+  sb.addEventListener('click',async()=>{
+    await db.from('settings').upsert([{key:'mot_alert_days',value:$('set-mot').value},{key:'service_overdue_days',value:$('set-svc').value}]);
+    alert('ההגדרות נשמרו');
+  });
+  main().appendChild(sb);
 }
 
-// ===== AUTO LOGIN CHECK =====
-
-const { data: { session } } = await db.auth.getSession();
-if (session) {
-  const { data: admin } = await db.from('admins').select('user_id').eq('user_id', session.user.id).single();
-  if (admin) { showApp(); } else { await db.auth.signOut(); }
+// ===== AUTO LOGIN =====
+const{data:{session}}=await db.auth.getSession();
+if(session){
+  const{data:admin}=await db.from('admins').select('user_id').eq('user_id',session.user.id).single();
+  if(admin)showApp();else await db.auth.signOut();
 }
 </script>
 </body>
