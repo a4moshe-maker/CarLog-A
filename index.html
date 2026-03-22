@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CarLog Admin</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; }
@@ -131,10 +131,10 @@
 </div>
 
 <script>
-const SUPABASE_URL = 'https://ulcebkhczxmeqzdhmsqg.supabase.co';
+const SUPABASE_URL = 'https://ulcebkhczxmeqzdhmsqg.sb.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY2Via2hjenhtZXF6ZGhtc3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNjY3MjMsImV4cCI6MjA4ODY0MjcyM30.JJUNzO3l1BIEm4guBB2TI0WF1gv0bIMaOfo0L4z0u-w';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let otpEmail = '';
@@ -150,13 +150,13 @@ async function handleLogin() {
 
   document.getElementById('login-btn').disabled = true;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) { showError(error.message); document.getElementById('login-btn').disabled = false; return; }
 
   // Check admin
-  const { data: admin } = await supabase.from('admins').select('user_id').eq('user_id', data.user.id).single();
+  const { data: admin } = await sb.from('admins').select('user_id').eq('user_id', data.user.id).single();
   if (!admin) {
-    await supabase.auth.signOut();
+    await sb.auth.signOut();
     showError('אין לך הרשאת מנהל');
     document.getElementById('login-btn').disabled = false;
     return;
@@ -164,8 +164,8 @@ async function handleLogin() {
 
   // Send OTP
   otpEmail = email;
-  await supabase.auth.signOut();
-  const { error: otpError } = await supabase.auth.signInWithOtp({ email });
+  await sb.auth.signOut();
+  const { error: otpError } = await sb.auth.signInWithOtp({ email });
   if (otpError) { showError(otpError.message); document.getElementById('login-btn').disabled = false; return; }
 
   document.getElementById('login-step1').classList.add('hidden');
@@ -181,7 +181,7 @@ async function handleOtp() {
 
   document.getElementById('otp-btn').disabled = true;
 
-  const { data, error } = await supabase.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
+  const { data, error } = await sb.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
   if (error) { showError('קוד שגוי או שפג תוקפו'); document.getElementById('otp-btn').disabled = false; return; }
 
   currentUser = data.user;
@@ -195,7 +195,7 @@ function showError(msg) {
 }
 
 async function handleSignOut() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   currentUser = null;
   document.getElementById('app').classList.remove('active');
   document.getElementById('login-screen').style.display = 'flex';
@@ -229,10 +229,10 @@ async function loadUsers() {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: users, error } = await supabase.rpc('admin_list_users');
+  const { data: users, error } = await sb.rpc('admin_list_users');
   if (error) { main.innerHTML = `<div class="card"><p>שגיאה: ${error.message}</p></div>`; return; }
 
-  const { data: vehicles } = await supabase.from('vehicles').select('user_id');
+  const { data: vehicles } = await sb.from('vehicles').select('user_id');
   const vehicleCounts = {};
   (vehicles || []).forEach(v => { vehicleCounts[v.user_id] = (vehicleCounts[v.user_id] || 0) + 1; });
 
@@ -267,7 +267,7 @@ async function deleteUser(userId, email) {
   if (!confirm(`למחוק את המשתמש ${email}?`)) return;
   if (!confirm('פעולה זו תמחק את כל נתוני המשתמש. להמשיך?')) return;
 
-  const { error } = await supabase.rpc('admin_delete_user', { target_user_id: userId });
+  const { error } = await sb.rpc('admin_delete_user', { target_user_id: userId });
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadUsers();
 }
@@ -278,16 +278,16 @@ async function loadUserDetail(userId) {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: users } = await supabase.rpc('admin_list_users');
+  const { data: users } = await sb.rpc('admin_list_users');
   const user = (users || []).find(u => u.id === userId);
   if (!user) { main.innerHTML = '<div class="card"><p>משתמש לא נמצא</p></div>'; return; }
 
-  const { data: vehicles } = await supabase.from('vehicles').select('*').eq('user_id', userId);
+  const { data: vehicles } = await sb.from('vehicles').select('*').eq('user_id', userId);
   const vehicleIds = (vehicles || []).map(v => v.id);
 
   let serviceCounts = {};
   if (vehicleIds.length > 0) {
-    const { data: services } = await supabase.from('service_records').select('vehicle_id').in('vehicle_id', vehicleIds);
+    const { data: services } = await sb.from('service_records').select('vehicle_id').in('vehicle_id', vehicleIds);
     (services || []).forEach(s => { serviceCounts[s.vehicle_id] = (serviceCounts[s.vehicle_id] || 0) + 1; });
   }
 
@@ -333,10 +333,10 @@ async function loadVehicleDetail(vehicleId, userId) {
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="loading">טוען...</div>';
 
-  const { data: vehicle } = await supabase.from('vehicles').select('*').eq('id', vehicleId).single();
+  const { data: vehicle } = await sb.from('vehicles').select('*').eq('id', vehicleId).single();
   if (!vehicle) { main.innerHTML = '<div class="card"><p>רכב לא נמצא</p></div>'; return; }
 
-  const { data: services } = await supabase.from('service_records').select('*').eq('vehicle_id', vehicleId).order('date', { ascending: false });
+  const { data: services } = await sb.from('service_records').select('*').eq('vehicle_id', vehicleId).order('date', { ascending: false });
   const totalCost = (services || []).reduce((sum, s) => sum + (s.cost || 0), 0);
 
   main.innerHTML = `
@@ -390,7 +390,7 @@ async function loadVehicleDetail(vehicleId, userId) {
 }
 
 async function showVehicleEdit(vehicleId, userId) {
-  const { data: v } = await supabase.from('vehicles').select('*').eq('id', vehicleId).single();
+  const { data: v } = await sb.from('vehicles').select('*').eq('id', vehicleId).single();
   if (!v) return;
 
   const main = document.getElementById('main-content');
@@ -422,14 +422,14 @@ async function saveVehicle(vehicleId, userId) {
     current_mileage: document.getElementById('e-km').value ? parseInt(document.getElementById('e-km').value) : null,
   };
 
-  const { error } = await supabase.from('vehicles').update(updates).eq('id', vehicleId);
+  const { error } = await sb.from('vehicles').update(updates).eq('id', vehicleId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadVehicleDetail(vehicleId, userId);
 }
 
 async function deleteVehicle(vehicleId, userId) {
   if (!confirm('למחוק את הרכב? כל הטיפולים יימחקו גם.')) return;
-  const { error } = await supabase.from('vehicles').delete().eq('id', vehicleId);
+  const { error } = await sb.from('vehicles').delete().eq('id', vehicleId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadUserDetail(userId);
 }
@@ -437,7 +437,7 @@ async function deleteVehicle(vehicleId, userId) {
 // ========== SERVICE EDIT ==========
 
 async function showServiceEdit(serviceId, vehicleId, userId) {
-  const { data: s } = await supabase.from('service_records').select('*').eq('id', serviceId).single();
+  const { data: s } = await sb.from('service_records').select('*').eq('id', serviceId).single();
   if (!s) return;
 
   const main = document.getElementById('main-content');
@@ -471,14 +471,14 @@ async function saveService(serviceId, vehicleId, userId) {
 
   if (!updates.work_done) { alert('שדה "עבודה שבוצעה" הוא חובה'); return; }
 
-  const { error } = await supabase.from('service_records').update(updates).eq('id', serviceId);
+  const { error } = await sb.from('service_records').update(updates).eq('id', serviceId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadVehicleDetail(vehicleId, userId);
 }
 
 async function deleteService(serviceId, vehicleId, userId) {
   if (!confirm('למחוק את הטיפול?')) return;
-  const { error } = await supabase.from('service_records').delete().eq('id', serviceId);
+  const { error } = await sb.from('service_records').delete().eq('id', serviceId);
   if (error) { alert('שגיאה: ' + error.message); return; }
   loadVehicleDetail(vehicleId, userId);
 }
@@ -494,14 +494,14 @@ function formatDate(dateStr) {
 
 // Check existing session on load
 (async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    const { data: admin } = await supabase.from('admins').select('user_id').eq('user_id', session.user.id).single();
+    const { data: admin } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).single();
     if (admin) {
       currentUser = session.user;
       showApp();
     } else {
-      await supabase.auth.signOut();
+      await sb.auth.signOut();
     }
   }
 })();
