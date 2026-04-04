@@ -568,18 +568,25 @@ async function loadBugReports(){
   main().innerHTML='<div class="loading">טוען...</div>';
   const users=await fetchUsers();
   const emailMap={};users.forEach(u=>{emailMap[u.id]=u.email});
+  const{data:profiles}=await db.from('profiles').select('id, first_name, last_name, phone');
+  const profileMap={};(profiles||[]).forEach(p=>{profileMap[p.id]=p});
   const{data:bugs}=await db.from('bug_reports').select('*').order('created_at',{ascending:false});
-  const rows=(bugs||[]).map(b=>`
+  const rows=(bugs||[]).map(b=>{
+    const prof=profileMap[b.user_id];
+    const fullName=prof?[prof.first_name,prof.last_name].filter(Boolean).join(' '):'';
+    const phone=prof?.phone||'';
+    return `
     <tr>
       <td><span style="display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;${b.status==='open'?'background:#fee2e2;color:#dc2626':'background:#dcfce7;color:#16a34a'}">${b.status==='open'?'פתוח':'טופל'}</span></td>
       <td>${b.image_url?`<a href="${b.image_url}" target="_blank" style="color:#2563eb">צפה בתמונה</a>`:'—'}</td>
       <td style="max-width:300px;white-space:pre-wrap;word-break:break-word">${b.description}</td>
-      <td>${emailMap[b.user_id]||b.user_id}</td>
+      <td>${emailMap[b.user_id]||b.user_id}${fullName?`<br><span style="color:#6b7280;font-size:12px">${fullName}</span>`:''}${phone?`<br><span style="color:#6b7280;font-size:12px">${phone}</span>`:''}</td>
       <td>${new Date(b.created_at).toLocaleDateString('he-IL')}</td>
       <td>
         <button class="btn-sm ${b.status==='open'?'btn-edit':'btn-danger'}" onclick="toggleBugStatus('${b.id}','${b.status}')">${b.status==='open'?'סמן כטופל':'פתח מחדש'}</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
   main().innerHTML=`
     <h2 style="margin-bottom:24px;font-size:24px">🐛 דיווחי באגים</h2>
     <div class="stats">
@@ -592,6 +599,7 @@ async function loadBugReports(){
       <tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:24px">אין דיווחים</td></tr>'}</tbody></table>
     </div>`;
 }
+window.toggleBugStatus=toggleBugStatus;
 async function toggleBugStatus(id,current){
   const newStatus=current==='open'?'resolved':'open';
   await db.from('bug_reports').update({status:newStatus}).eq('id',id);
